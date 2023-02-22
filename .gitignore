@@ -1,0 +1,7 @@
+
+.DS_Store
+MenuItReplica/gradle/wrapper/gradle-wrapper.jar
+*.jar
+*.properties
+MenuItReplica/gradlew
+MenuItReplica/gradlew.bat
