@@ -27,9 +27,15 @@ public class User {
 
     private String phone;
 
-    private ArrayList<Order> orders;
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders = new ArrayList<>();
 
-    private ArrayList<Store> stores;
+    @OneToMany(mappedBy = "owner")
+    private List<Store> stores = new ArrayList<>();
 
-    private List<Long> favStores;
+    @OneToMany(mappedBy = "writtenBy")
+    private List<Rating> ratings = new ArrayList<>();
+
+    @Embedded
+    private favStoreList favStores;
 }

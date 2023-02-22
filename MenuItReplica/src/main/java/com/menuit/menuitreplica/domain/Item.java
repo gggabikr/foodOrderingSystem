@@ -45,5 +45,6 @@ public class Item {
     private ItemTag itemTags; //Popular, Best, Recommended, NoTag;
 
     @NotEmpty(message = "Tax info is mandatory.")
+    @Enumerated(EnumType.STRING)
     private TaxInfo taxInfo; //NoTax, GST, PST, BOTH
 }

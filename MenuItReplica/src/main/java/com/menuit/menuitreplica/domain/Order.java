@@ -3,26 +3,29 @@ package com.menuit.menuitreplica.domain;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
+@Table(name = "orders")
 @Getter @Setter
 public class Order {
     @Id @GeneratedValue
     @Column(name="order_id")
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id")
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="store_id")
     private Store store;
 
-    private ArrayList<OrderItem> orderItems;
+    private List<OrderItem> orderItems = new ArrayList<>();
 
     private float tipAmount;
 
