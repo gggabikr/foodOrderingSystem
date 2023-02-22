@@ -14,6 +14,7 @@ public class Address {
     private String unit;
     private String zipcode;
 
+    //this prevents using default constructor
     protected Address() {
     }
 
