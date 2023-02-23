@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "users")// table name 'user' will make an error
 @Getter @Setter
 public class User {
 
@@ -36,6 +37,6 @@ public class User {
     @OneToMany(mappedBy = "writtenBy")
     private List<Rating> ratings = new ArrayList<>();
 
-    @Embedded
-    private favStoreList favStores;
+//    @OneToMany(mappedBy = "user")
+//    private List<FavStore> favStore;
 }
