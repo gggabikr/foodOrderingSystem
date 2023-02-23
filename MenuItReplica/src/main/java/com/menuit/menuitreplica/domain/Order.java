@@ -5,7 +5,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +12,7 @@ import java.util.List;
 @Table(name = "orders")
 @Getter @Setter
 public class Order {
+
     @Id @GeneratedValue
     @Column(name="order_id")
     private Long id;
@@ -25,6 +25,7 @@ public class Order {
     @JoinColumn(name="store_id")
     private Store store;
 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
 
     private float tipAmount;
@@ -35,7 +36,7 @@ public class Order {
 
     private LocalDateTime orderTime;
 
-    private DateTimeFormatter scheduledPickUpTime;
+    private LocalDateTime scheduledPickUpTime;
 
     private String tableName; //only for the table order
 }
