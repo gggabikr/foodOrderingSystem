@@ -34,13 +34,20 @@ public class Store {
     private List<Rating> ratings = new ArrayList<>();
 
     //매장 오픈시간과 주문가능 시간 둘다 표시하는게 좋을듯 싶은데..
-    private HashMap<DayOfWeek, String> openHours;
+
+    @OneToMany(mappedBy = "store")
+    private List<Hours> openHours = new ArrayList<>();
+
+    @OneToMany(mappedBy = "store")
+    private List<Hours> orderAvailableHours = new ArrayList<>();
 
     private String storeDescription;
 
-    @Enumerated(EnumType.STRING)
-    private List<Tag> tags = new ArrayList<>();
+//    @Enumerated(EnumType.STRING)
+    @OneToMany(mappedBy = "store")
+    private List<StoreTag> tags = new ArrayList<>(); //food types eg. Chinese, Italian..
 
+    @OneToMany(mappedBy = "store")
     private List<Item> items = new ArrayList<>();
 
     @OneToMany(mappedBy = "store")
