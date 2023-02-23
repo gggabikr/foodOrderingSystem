@@ -1,12 +1,18 @@
 package com.menuit.menuitreplica.domain;
 
-public enum UserRole {
-    ROLE_OWNER("ROLE_OWNER"), ROLE_MANAGER("ROLE_MANAGER"),
-    ROLE_GENERAL("ROLE_GENERAL"), ROLE_TABLE("ROLE_TABLE");
+import lombok.Getter;
 
-    private final String text;
+@Getter
+public enum UserRole {
+    ROLE_OWNER("ROLE_OWNER"),
+    ROLE_GENERAL("ROLE_GENERAL"),
+    ROLE_TABLE("ROLE_TABLE");
+
 
     UserRole(final String text){
         this.text = text;
     }
+
+    private final String text;
+
 }
