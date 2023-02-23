@@ -5,3 +5,4 @@ MenuItReplica/gradle/wrapper/gradle-wrapper.jar
 *.properties
 MenuItReplica/gradlew
 MenuItReplica/gradlew.bat
+*.png
