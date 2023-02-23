@@ -13,6 +13,10 @@ public class Item {
     @Column(name="item_id")
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "store_id")
+    private Store store;
+
     @NotEmpty(message = "Item name is mandatory.")
     private String name;
 
