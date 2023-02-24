@@ -37,6 +37,6 @@ public class User {
     @OneToMany(mappedBy = "writtenBy")
     private List<Rating> ratings = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "user")
-//    private List<FavStore> favStore;
+    @OneToMany
+    private List<Store> favStore;
 }
