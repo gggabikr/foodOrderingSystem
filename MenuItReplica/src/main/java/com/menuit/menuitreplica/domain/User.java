@@ -26,11 +26,14 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
+    private String username; //for the table, table name or table number
+
     private String phone;
 
     @OneToMany(mappedBy = "user")
     private List<Order> orders = new ArrayList<>();
 
+    //only Owner account & table account will have it.
     @OneToMany(mappedBy = "owner")
     private List<Store> stores = new ArrayList<>();
 
@@ -39,4 +42,10 @@ public class User {
 
     @OneToMany
     private List<Store> favStore;
+
+    //==Relational methods==//
+    public void addStore(Store store){
+        this.stores.add(store);
+        store.setOwner(this);
+    }
 }
