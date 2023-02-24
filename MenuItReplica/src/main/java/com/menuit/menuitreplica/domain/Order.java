@@ -29,7 +29,7 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    private double tipAmount;
+//    private double tipAmount;
 
     @Enumerated(EnumType.STRING)
     @NotEmpty
@@ -43,7 +43,36 @@ public class Order {
 
     private LocalDateTime scheduledPickUpTime;
 
-    private String tableName; //only for the table order
+    @OneToOne(mappedBy = "order")
+    private Payment payment;
+
+    //==Constructor==//
+    public static Order createTableOrder(
+            User user, Store store,OrderItem... orderItems){
+        Order order = new Order();
+        order.setUser(user);
+        order.setStore(store);
+        for(OrderItem orderItem : orderItems){
+            order.addOrderItem(orderItem);
+        }
+        order.orderType = OrderType.table;
+        order.orderStatus = OrderStatus.preparing;
+        return order;
+    }
+
+    public static Order createNonTableOrder(
+            User user, Store store,
+            OrderType orderType, OrderItem... orderItems){
+        Order order = new Order();
+        order.setUser(user);
+        order.setStore(store);
+        for(OrderItem orderItem : orderItems){
+            order.addOrderItem(orderItem);
+        }
+        order.orderType = orderType;
+        order.orderStatus = OrderStatus.confirming;
+        return order;
+    }
 
     //==Relational methods==//
     public void setUser(User user){
@@ -61,39 +90,39 @@ public class Order {
         store.getOrders().add(this);
     }
 
-    //==Business methods==//
-    public double getSubtotal(){
-        double subtotal = 0;
-        for(OrderItem orderItem: getOrderItems()){
-            double subtotalEach = orderItem.getOrderPrice() * orderItem.getCount();
-            subtotal +=subtotalEach;
-        }
-        return Math.round(subtotal * 100) / 100.0;
-    }
-
-    public double getGST(){
-        return Math.round(getSubtotal() * 5)/100.0;
-    }
-
-    public double getPST(){
-        double alcoholic = 0;
-        double soda = 0;
-        for(OrderItem orderItem: getOrderItems()){
-            double subtotalEach = orderItem.getOrderPrice() * orderItem.getCount();
-            ItemType itemType = orderItem.getItem().getItemType();
-
-            if(itemType.equals(ItemType.alcoholic)){
-                alcoholic += subtotalEach;
-            } else if(itemType.equals(ItemType.soda)){
-                soda += subtotalEach;
-            }
-        }
-        double PstBeforeRounding = alcoholic * 0.1 + soda * 0.07;
-        return Math.round(PstBeforeRounding*100)/100.0;
-    }
-
-    public double getTotal(){
-        return Math.round((getSubtotal()+getGST()+getPST())*100)/100.0;
-    }
+//    //==Business methods==//
+//    public double getSubtotal(){
+//        double subtotal = 0;
+//        for(OrderItem orderItem: getOrderItems()){
+//            double subtotalEach = orderItem.getOrderPrice() * orderItem.getCount();
+//            subtotal +=subtotalEach;
+//        }
+//        return Math.round(subtotal * 100) / 100.0;
+//    }
+//
+//    public double getGST(){
+//        return Math.round(getSubtotal() * 5)/100.0;
+//    }
+//
+//    public double getPST(){
+//        double alcoholic = 0;
+//        double soda = 0;
+//        for(OrderItem orderItem: getOrderItems()){
+//            double subtotalEach = orderItem.getOrderPrice() * orderItem.getCount();
+//            ItemType itemType = orderItem.getItem().getItemType();
+//
+//            if(itemType.equals(ItemType.alcoholic)){
+//                alcoholic += subtotalEach;
+//            } else if(itemType.equals(ItemType.soda)){
+//                soda += subtotalEach;
+//            }
+//        }
+//        double PstBeforeRounding = alcoholic * 0.1 + soda * 0.07;
+//        return Math.round(PstBeforeRounding*100)/100.0;
+//    }
+//
+//    public double getTotal(){
+//        return Math.round((getSubtotal()+getGST()+getPST())*100)/100.0;
+//    }
 }
 
