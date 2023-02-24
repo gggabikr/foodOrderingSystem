@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter @Setter
+@Getter
 public class Category {
 
     @Id @GeneratedValue
@@ -21,8 +21,18 @@ public class Category {
     @JoinColumn(name = "store_id")
     private Store store;
 
-    @OneToMany
-    @JoinTable(name = "category_item")
+    @OneToMany(mappedBy = "category")
+//    @JoinTable(name = "category_id")
     private List<Item> items = new ArrayList<>();
 
+    //==Relational methods==//
+    public void setStore(Store store){
+        this.store = store;
+        store.getCategories().add(this);
+    }
+
+    public void addItem(Item item){
+        this.getItems().add(item);
+        item.setCategory(this);
+    }
 }
