@@ -20,7 +20,31 @@ public class OrderItem {
     @JoinColumn(name = "order_id")
     private Order order;
 
-    private int orderPrice; //주문 가격
+    private double orderPrice; //주문 가격 per unit
 
     private int count; //주문 수량
+
+    //==Constructor==//
+    public static OrderItem createOrderItem(Item item, int count){
+        OrderItem orderItem = new OrderItem();
+        orderItem.setItem(item);
+        if(item.getDiscountPercent() == 0 && item.getDiscountAmount() == 0){
+            orderItem.setOrderPrice(roundWithTwoDecimals(item.getPrice()));
+        } else if(item.getDiscountAmount() != 0){
+            orderItem.setOrderPrice(roundWithTwoDecimals(item.getPrice() - item.getDiscountAmount()));
+        } else{
+            orderItem.setOrderPrice(roundWithTwoDecimals(item.getPrice() * (1-item.getDiscountPercent())));
+        }
+        orderItem.setCount(count);
+
+        return orderItem;
+    }
+
+    public static double roundWithTwoDecimals(double number){
+        return Math.round(number*100)/100.0;
+    }
+
+    public double getTotalPrice(){
+        return roundWithTwoDecimals(getOrderPrice()*getCount());
+    }
 }
