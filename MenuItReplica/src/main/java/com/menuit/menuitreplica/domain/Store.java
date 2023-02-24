@@ -58,4 +58,17 @@ public class Store {
 //    private event??
 
 //    private String pictureOfStore;
+
+    //==Relational methods==//
+    public void setOpenHours(Hours hour){
+        this.getOpenHours().removeIf(hours -> hours.getDayOfWeek() == hour.getDayOfWeek());
+        this.openHours.add(hour);
+        hour.setStore(this);
+    }
+
+    public void setAvailableHours(Hours hour){
+        this.getOrderAvailableHours().removeIf(hours -> hours.getDayOfWeek() == hour.getDayOfWeek());
+        this.orderAvailableHours.add(hour);
+        hour.setStore(this);
+    }
 }
