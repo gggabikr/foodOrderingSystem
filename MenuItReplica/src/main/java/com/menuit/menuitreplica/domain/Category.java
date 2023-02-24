@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter
+@Getter @Setter
 public class Category {
 
     @Id @GeneratedValue
@@ -16,6 +16,8 @@ public class Category {
     private Long id;
 
     private String name;
+
+    private int categoryOrder; //to ordering categories
 
     @ManyToOne
     @JoinColumn(name = "store_id")
@@ -26,11 +28,6 @@ public class Category {
     private List<Item> items = new ArrayList<>();
 
     //==Relational methods==//
-    public void setStore(Store store){
-        this.store = store;
-        store.getCategories().add(this);
-    }
-
     public void addItem(Item item){
         this.getItems().add(item);
         item.setCategory(this);
