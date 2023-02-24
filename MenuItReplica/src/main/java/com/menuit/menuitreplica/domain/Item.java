@@ -6,6 +6,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 
 @Entity
+@Table(uniqueConstraints=@UniqueConstraint(columnNames={"store_id", "name"}))
+
 @Getter
 public class Item {
     @Id @GeneratedValue
@@ -82,9 +84,11 @@ public class Item {
     public void setItemTags(ItemTag itemTags) {
         this.itemTags = itemTags;
     }
-    public void setTaxInfo(ItemType itemType) {
+    public void setItemType(ItemType itemType) {
         this.itemType = itemType;
     }
+
+
 
     //==Constructor==//
     public Item(Store store, Category category, String name, double price){
@@ -100,6 +104,7 @@ public class Item {
         this.itemTags = ItemTag.NoTag;
         this.discountAmount = 0;
         this.discountPercent = 0;
+        this.status = true;
     }
 
     public Item(Store store, Category category, String name, double price, String itemType){
@@ -110,12 +115,21 @@ public class Item {
         store.getItems().add(this);
         //default setting below
         this.itemType = ItemType.valueOf(itemType);
-        this.ageRestriction = false;
+
+        //alcoholic-> true, else -> false
+        this.ageRestriction = this.itemType == ItemType.alcoholic;
+
         this.minimumOrderCount = 1;
         this.itemTags = ItemTag.NoTag;
         this.discountAmount = 0;
         this.discountPercent = 0;
+        this.status = true;
     }
 
     //==Relational methods==//
+
+    //==Business logics==//
+    public void toggleStatus(){
+        this.status = !this.status;
+    }
 }
