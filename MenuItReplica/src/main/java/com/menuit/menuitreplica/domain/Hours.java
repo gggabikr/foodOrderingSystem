@@ -20,6 +20,7 @@ public class Hours {
     private Store store;
 
     //if I set it as 'day' it will make an error on DB
+    @Enumerated(EnumType.STRING)
     private DayOfWeek dayOfWeek;
     //Monday, Tuesday, Wednesday, Thursday,
     //Friday, Saturday, Sunday
@@ -27,4 +28,12 @@ public class Hours {
     private Time opening;
 
     private Time closing;
+
+    protected Hours(){};
+
+    public Hours(DayOfWeek day, Time opening, Time closing){
+        this.dayOfWeek = day;
+        this.opening = opening;
+        this.closing = closing;
+    }
 }
