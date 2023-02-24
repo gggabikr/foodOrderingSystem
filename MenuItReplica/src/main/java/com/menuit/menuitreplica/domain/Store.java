@@ -2,12 +2,9 @@ package com.menuit.menuitreplica.domain;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.aspectj.weaver.ast.Or;
 
 import javax.persistence.*;
-import java.time.DayOfWeek;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @Entity
@@ -32,8 +29,6 @@ public class Store {
 
     @OneToMany(mappedBy = "store")
     private List<Rating> ratings = new ArrayList<>();
-
-    //매장 오픈시간과 주문가능 시간 둘다 표시하는게 좋을듯 싶은데..
 
     @OneToMany(mappedBy = "store")
     private List<Hours> openHours = new ArrayList<>();
@@ -71,4 +66,16 @@ public class Store {
         this.orderAvailableHours.add(hour);
         hour.setStore(this);
     }
+
+    public void setCategory(Category category){
+        this.getCategories().add(category);
+        category.setStore(this);
+    }
+
+    public void setStoreTag(StoreTag storeTag){
+        this.tags.add(storeTag);
+        storeTag.setStore(this);
+    }
+
+
 }
