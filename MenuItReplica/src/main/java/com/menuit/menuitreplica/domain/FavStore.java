@@ -19,4 +19,11 @@ public class FavStore {
     @ManyToOne
     @JoinColumn(name = "favstore_id")
     private Store favStore;
+
+    protected FavStore(){};
+
+    public FavStore(User user, Store store){
+        this.user = user;
+        this.favStore = store;
+    }
 }
