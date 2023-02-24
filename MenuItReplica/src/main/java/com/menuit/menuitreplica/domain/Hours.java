@@ -19,7 +19,7 @@ public class Hours {
     @JoinColumn(name = "store_id")
     private Store store;
 
-    //if I set it as 'day' it will make an error on DB
+    //if I set the name to 'day' it will make an error on DB
     @Enumerated(EnumType.STRING)
     private DayOfWeek dayOfWeek;
     //Monday, Tuesday, Wednesday, Thursday,
