@@ -18,17 +18,23 @@ public class Payment {
     @JoinColumn(name = "order_id")
     private Order order;
 
-    private double subtotal;
-
-    private double GST;
-
-    private double PST;
+//    private double subtotal;
+//
+//    private double GST;
+//
+//    private double PST;
+//
+    private double total;
 
     private double totalTipAmount;
 
-    private boolean gratuity;
+    private boolean isGratuity;
 
-    //payer이고 뭐고 다 때려치고 스트링으로 영수증 만들어내는거나 만들까 생각중.
+    private boolean status; //true = fully paid, false = not yet paid fully
+
+    //payer 이고 뭐고 다 때려치고 스트링으로 영수증 만들어내는거나 만들까 생각중.
+    // 그경우엔 여기에 total, paidAmount, tipAmount 만들고 페이 될때마다 paidAmount 늘려서
+    // total 과 paidAmount 의 차이가 5센트 이하가 되면 orderStatus 를 paidInFull 로 상태를 변경하는 방법을 사용할 예정.
 
     @OneToMany
     private List<Payer> payers = new ArrayList<>();
@@ -93,7 +99,35 @@ public class Payment {
         return dividedOrderItem;
     }
 
+    public boolean checkPayments(){
+        double paidAmount = 0;
+        for (Payer payer: getPayers()){
+            if(payer.isPaid()) {
+                paidAmount += payer.getTotal();
+            }
+        }
 
+        //difference between total and paid total.
+        double difference = getTotal() - paidAmount;
+        if (difference <=0 || Math.abs(difference)<getTotal()*0.01){
+            setStatus(true);
+            setTotalTipAmount();
+            return true;
+        } else{
+            return false;
+        }
+    }
+
+
+    public void setTotalTipAmount(){
+        double totalTipAmount = 0;
+        for (Payer payer: getPayers()){
+            if(payer.isPaid()) {
+                totalTipAmount += payer.getTipAmount();
+            }
+        }
+        setTotalTipAmount(totalTipAmount);
+    }
 
     //사람수대로 나누기 -> 토탈금액을 나누면 된다.
     //각각 계산하는 메뉴 나누기 -> 오더를 하나 더 만들어서 오더 아이템을 옮겨담는식.
