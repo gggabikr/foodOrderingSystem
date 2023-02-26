@@ -18,12 +18,6 @@ public class Payment {
     @JoinColumn(name = "order_id")
     private Order order;
 
-//    private double subtotal;
-//
-//    private double GST;
-//
-//    private double PST;
-//
     private double total;
 
     private double totalTipAmount;
@@ -129,13 +123,17 @@ public class Payment {
         setTotalTipAmount(totalTipAmount);
     }
 
-    //사람수대로 나누기 -> 토탈금액을 나누면 된다.
-    //각각 계산하는 메뉴 나누기 -> 오더를 하나 더 만들어서 오더 아이템을 옮겨담는식.
+    //==결제 방법에 따라 다른 결제 방식, 단계 구현하기==//
 
-    //아래 두가지는 추후 구현 예정.
-    //맥주는 5등분, 음식은 3등분 같은식으로 나누기 -> 위 두가지 방법을
-    //3명은 20불씩, 나머지는 마지막 한사람이 다 내는식;
+        //사람수대로 나누기 -> 토탈금액을 나누면 된다. -->구현완료//테스트 미완
 
+        //각각 계산하는 메뉴 나누기 -> 오더를 하나 더 만들어서 오더 아이템을 옮겨담는식. -->구현예정
+
+        //3명은 20불씩, 나머지는 마지막 한사람이 다 내는식; --> 구현예정.
+        // payer에 orderItem, GST, PST 계산 없이 total과 tipAmount만 세팅하고,
+        // Payment에서는 그냥 total 에서 payer.total의 금액만큼 제외하기 && totalTipAmount에 tipAmount더하기.
+
+        //맥주는 5등분, 음식은 3등분 같은식으로 나누기 -> 구현 안함
 
 
 }
