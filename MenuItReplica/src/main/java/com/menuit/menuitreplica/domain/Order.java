@@ -63,15 +63,19 @@ public class Order {
     public static Order createNonTableOrder(
             User user, Store store,
             OrderType orderType, OrderItem... orderItems){
-        Order order = new Order();
-        order.setUser(user);
-        order.setStore(store);
-        for(OrderItem orderItem : orderItems){
-            order.addOrderItem(orderItem);
+        if(orderType.equals(OrderType.table)){
+            return createTableOrder(user, store, orderItems);
+        } else{
+            Order order = new Order();
+            order.setUser(user);
+            order.setStore(store);
+            for(OrderItem orderItem : orderItems){
+                order.addOrderItem(orderItem);
+            }
+            order.orderType = orderType;
+            order.orderStatus = OrderStatus.confirming;
+            return order;
         }
-        order.orderType = orderType;
-        order.orderStatus = OrderStatus.confirming;
-        return order;
     }
 
     //==Relational methods==//
@@ -89,6 +93,54 @@ public class Order {
         this.store = store;
         store.getOrders().add(this);
     }
+
+    protected void setOrderStatus(OrderStatus orderStatus){
+        this.orderStatus = orderStatus;
+    }
+
+    public void cancelOrder(){
+        this.orderStatus = OrderStatus.cancelled;
+    }
+
+    public void undoCancelling(){
+        this.orderStatus = OrderStatus.preparing;
+    }
+
+    public void setNextStatus(){
+        if(getOrderType().equals(OrderType.table)){
+            if(getOrderStatus().equals(OrderStatus.preparing)){
+                setOrderStatus(OrderStatus.completed);
+            } else if(getOrderStatus().equals(OrderStatus.completed)){
+                setOrderStatus(OrderStatus.paidInFull);
+            } else if(getOrderStatus().equals(OrderStatus.paidInFull)){
+                System.out.println("This order is already completed and paid in full.");
+            } else{
+                System.out.println("Unexpected error has occur. Please check it again");
+            }
+        } else if(getOrderType().equals(OrderType.pickUp) || getOrderType().equals(OrderType.delivery)){
+            if(getOrderStatus().equals(OrderStatus.confirming)){
+                setOrderStatus(OrderStatus.preparing);
+            } else if(getOrderStatus().equals(OrderStatus.preparing)){
+                setOrderStatus(OrderStatus.ReadyForPickUp);
+            } else if(getOrderStatus().equals(OrderStatus.ReadyForPickUp)){
+                setOrderStatus(OrderStatus.completed);
+            } else if(getOrderStatus().equals(OrderStatus.completed)){
+                setOrderStatus(OrderStatus.paidInFull);
+            } else if(getOrderStatus().equals(OrderStatus.paidInFull)){
+                System.out.println("This order is already completed and paid in full.");
+            } else{
+                System.out.println("Unexpected error has occur. Please check it again");
+            }
+        }
+    }
+
+    // for table order:
+    // preparing -> completed -> painInFull // cancelled
+
+    // for pick up // delivery order:
+    // confirming -> preparing -> ReadyForPickUp
+    // -> completed -> paidInFull // cancelled
+
 
 //    //==Business methods==//
 //    public double getSubtotal(){
