@@ -24,6 +24,10 @@ public class OrderItem {
 
     private int count; //주문 수량
 
+    private double discountPerItem; //개당 할인금액
+
+    private String comment; //기타 메모
+
     //==Constructor==//
     public static OrderItem createOrderItem(Item item, int count){
         OrderItem orderItem = new OrderItem();
@@ -32,8 +36,10 @@ public class OrderItem {
             orderItem.setOrderPrice(roundWithTwoDecimals(item.getPrice()));
         } else if(item.getDiscountAmount() != 0){
             orderItem.setOrderPrice(roundWithTwoDecimals(item.getPrice() - item.getDiscountAmount()));
+            orderItem.setDiscountPerItem(item.getDiscountAmount());
         } else{
             orderItem.setOrderPrice(roundWithTwoDecimals(item.getPrice() * (1-item.getDiscountPercent())));
+            orderItem.setDiscountPerItem(roundWithTwoDecimals(item.getPrice()-(item.getPrice() * (1-item.getDiscountPercent()))));
         }
         orderItem.setCount(count);
 
