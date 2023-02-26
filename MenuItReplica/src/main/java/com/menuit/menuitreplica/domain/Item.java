@@ -28,6 +28,7 @@ public class Item {
     @NotEmpty(message = "Item price is mandatory.")
     private double price;
 
+    //discount on item, no matter who orders it.
     private int discountPercent;
 
     private int discountAmount;
