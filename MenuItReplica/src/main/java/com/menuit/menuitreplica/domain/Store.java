@@ -15,6 +15,8 @@ public class Store {
     @Column(name="store_id")
     private Long id;
 
+    private String name;
+
     @Embedded
     private Address address;
 
@@ -47,6 +49,8 @@ public class Store {
 
     @OneToMany(mappedBy = "store")
     private List<Category> categories = new ArrayList<>();
+
+    private int gratuity; //if number of customers is above certain number, it will set a tip with certain percentage.
 
     private boolean status;
 
