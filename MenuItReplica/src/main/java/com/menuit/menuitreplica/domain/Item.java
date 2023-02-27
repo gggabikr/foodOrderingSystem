@@ -14,7 +14,7 @@ public class Item {
     @Column(name="item_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
     private Store store;
 
@@ -33,7 +33,7 @@ public class Item {
 
     private int discountAmount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     @NotEmpty(message = "Category is mandatory.")
     private Category category;

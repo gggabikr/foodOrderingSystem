@@ -22,7 +22,7 @@ public class Store {
 
     private String phone;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User owner;
 
