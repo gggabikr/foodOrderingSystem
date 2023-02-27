@@ -15,7 +15,7 @@ public class UserRepository {
 
     private final EntityManager em;
 
-    public Long save(User user){
+    public Long save(User user) throws Exception {
         if(!this.findByEmail(user.getEmail()).isEmpty()){
             if(!Objects.equals(user.getId(), this.findByEmail(user.getEmail()).get(0).getId())){
                 throw new IllegalStateException("There is an user with a same email address.");
