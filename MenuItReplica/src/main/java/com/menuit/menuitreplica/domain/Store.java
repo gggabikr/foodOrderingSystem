@@ -32,6 +32,8 @@ public class Store {
     @OneToMany(mappedBy = "store")
     private List<Rating> ratings = new ArrayList<>();
 
+    private double ratingScore;
+
     @OneToMany(mappedBy = "store")
     private List<Hours> openHours = new ArrayList<>();
 
@@ -82,4 +84,11 @@ public class Store {
     }
 
 
+    public void updateRatingScore(){
+        double sumOfRatings = 0;
+        for(Rating rating: ratings){
+            sumOfRatings += rating.getScore();
+        }
+        this.setRatingScore(Math.round(sumOfRatings/getRatings().size()*100)/100.0);
+    }
 }
