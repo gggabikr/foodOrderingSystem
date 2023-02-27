@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 @RequiredArgsConstructor
@@ -14,9 +15,18 @@ public class UserRepository {
 
     private final EntityManager em;
 
-    public void save(User user){
+    public Long save(User user){
+        if(!this.findByEmail(user.getEmail()).isEmpty()){
+            if(!Objects.equals(user.getId(), this.findByEmail(user.getEmail()).get(0).getId())){
+                throw new IllegalStateException("There is an user with a same email address.");
+            } else {
+                em.merge(user);
+            }
+        }
         em.persist(user);
+        return user.getId();
     }
+
 
     public User findOne(Long id){
         return em.find(User.class, id);
