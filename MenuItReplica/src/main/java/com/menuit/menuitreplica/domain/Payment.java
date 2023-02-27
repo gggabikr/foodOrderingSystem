@@ -1,6 +1,8 @@
 package com.menuit.menuitreplica.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -9,12 +11,13 @@ import java.util.List;
 
 @Entity
 @Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Payment {
     @Id @GeneratedValue
     @Column(name="payment_id")
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
 
@@ -35,6 +38,32 @@ public class Payment {
 
 //    private Store store;
 
+    public static Payment createPayment(Order order, int numOfCustomers){
+        Payment payment = new Payment();
+        List<OrderItem> orderItems = order.getOrderItems();
+        double total = orderItems.stream().mapToDouble(OrderItem::getTotalPrice).sum();
+        payment.setTotal(total);
+
+        payment.setGratuity(order.getStore().getGratuity() <= numOfCustomers);
+        payment.setStatus(false);
+        payment.setTotalTipAmount(0);
+
+        Payer payer = new Payer();
+        payer.setPayment(payment);
+        payer.setOrderItems(orderItems);
+        payer.setSubtotal(payer.getSubtotal());
+        payer.setPST(payer.getPST());
+        payer.setGST(payer.getGST());
+        payer.setTotal(payer.getTotal());
+        payer.setPaid(false);
+
+        payment.getPayers().add(payer);
+
+        order.setPayment(payment);
+
+        return payment;
+    }
+
     public void makeEvenPayments(int numOfCustomers){
         for(int i=1; i<numOfCustomers+1; i++){
             Payer payer = new Payer();
@@ -47,6 +76,16 @@ public class Payment {
                 payer.getOrderItems().add(divideOrderItem(orderItem, numOfCustomers));
             }
         }
+    }
+
+    public Payer addPayer(){
+        Payer payer = new Payer();
+        payer.setName("Customer");
+        payer.setPayment(this);
+        this.getPayers().add(payer);
+        payer.setPaid(false);
+        payers.add(payer);
+        return payer;
     }
 
 
@@ -103,7 +142,8 @@ public class Payment {
 
         //difference between total and paid total.
         double difference = getTotal() - paidAmount;
-        if (difference <=0 || Math.abs(difference)<getTotal()*0.01){
+        //if paidAmount is bigger than the total or the difference is less than 20 cents, it will accept it as paid all.
+        if (difference <=0 || Math.abs(difference)<0.2){
             setStatus(true);
             setTotalTipAmount();
             return true;
@@ -122,6 +162,15 @@ public class Payment {
         }
         setTotalTipAmount(totalTipAmount);
     }
+
+    public void deletePayer(Payer payer) throws IllegalAccessException {
+        if(!payer.isPaid() && payer.getOrderItems().size() ==0){
+            this.getPayers().remove(payer);
+        } else {
+            throw new IllegalAccessException("Payer cannot be deleted unless its orderItem list is empty and payer did not make a payment.");
+        }
+    }
+
 
     //==결제 방법에 따라 다른 결제 방식, 단계 구현하기==//
 
