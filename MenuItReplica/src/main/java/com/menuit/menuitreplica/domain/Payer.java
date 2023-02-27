@@ -16,7 +16,7 @@ public class Payer {
     @Column(name = "payer_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_id")
     private Payment payment;
 
@@ -79,6 +79,15 @@ public class Payer {
         double total = Math.round((getSubtotal() + getGST() + getPST()) * 100) / 100.0;
         setTotal(total);
         return total;
+    }
+
+    public void moveItemToAnotherPayer(OrderItem orderItem, Payer payer){
+        if(getOrderItems().contains(orderItem)){
+            getOrderItems().remove(orderItem);
+            payer.getOrderItems().add(orderItem);
+        } else {
+            throw new NullPointerException("Selected orderItem is not exist for the payer.");
+        }
     }
 
     public void makeBill(){
