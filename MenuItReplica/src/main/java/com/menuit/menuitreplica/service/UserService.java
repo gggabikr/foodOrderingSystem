@@ -5,6 +5,7 @@ import com.menuit.menuitreplica.domain.UserRole;
 import com.menuit.menuitreplica.repository.UserRepository;
 import com.menuit.menuitreplica.security.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,7 +25,7 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     
     //Sign Up
-    public Long join(String email, String fullName, String password, UserRole role) throws Exception {
+    public Long join(String email, String fullName, String password, UserRole role, @Nullable String phoneNumber) throws Exception {
         User user = new User();
         user.setEmail(email
         );
@@ -32,6 +33,7 @@ public class UserService implements UserDetailsService {
         validateDuplicateEmail(email);
         user.setFullName(fullName);
         user.setRole(role);
+        user.setPhone(phoneNumber);
 
         //encoding the password
         String enPw = passwordEncoder.encode(password);
@@ -60,7 +62,8 @@ public class UserService implements UserDetailsService {
     }
 
     public Boolean login(String email, String rawPw) {
-        User user = userRepository.findByEmail(email).get(0);
+//        User user = userRepository.findByEmail(email).get(0);
+        UserDetails user = loadUserByEmail(email);
         return passwordEncoder.matches(rawPw, user.getPassword());
     }
 
@@ -80,7 +83,7 @@ public class UserService implements UserDetailsService {
     }
 
     //look up all the users
-    public List<User> findUsers(){
+    public List<User> findAllUsers(){
         return userRepository.findAll();
     }
 
@@ -93,7 +96,7 @@ public class UserService implements UserDetailsService {
     }
 
     public List<User> findByUserRole(String userRole){
-        return userRepository.findByUserRole(userRole);
+        return userRepository.findByUserRole(UserRole.valueOf(userRole));
     }
 
     public List<User> findByPhoneNumber(String phoneNumber){
