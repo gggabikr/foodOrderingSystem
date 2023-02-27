@@ -49,10 +49,6 @@ public class UserRepository {
                 .getResultList();
     }
 
-    public List<User> findByUserRole(String userRoleName){
-        UserRole userRole = UserRole.valueOf(userRoleName);
-        return findByUserRole(userRole);
-    }
 
     public List<User> findByPhoneNumber(String phoneNumber){
         return em.createQuery("select u from User u where u.phone = :phoneNumber", User.class)
