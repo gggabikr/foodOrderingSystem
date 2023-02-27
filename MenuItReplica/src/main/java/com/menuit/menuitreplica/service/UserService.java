@@ -78,4 +78,25 @@ public class UserService implements UserDetailsService {
         System.out.println("User with email:" + email + " is found. Will try login");
         return new PrincipalDetails(user.get(0));
     }
+
+    //look up all the users
+    public List<User> findUsers(){
+        return userRepository.findAll();
+    }
+
+    public User findOneById(Long userId){
+        return userRepository.findOne(userId);
+    }
+
+    public List<User> findByEmail(String email){
+        return userRepository.findByEmail(email);
+    }
+
+    public List<User> findByUserRole(String userRole){
+        return userRepository.findByUserRole(userRole);
+    }
+
+    public List<User> findByPhoneNumber(String phoneNumber){
+        return userRepository.findByPhoneNumber(phoneNumber);
+    }
 }
