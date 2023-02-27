@@ -25,7 +25,7 @@ public class Rating {
     private User writtenBy;
 
     @NotEmpty(message = "rating is mandatory to leave a rating.")
-    private double rating; // 1~5 stars
+    private double score; // 1~5 stars
 
     private String comment;
 
@@ -40,12 +40,13 @@ public class Rating {
     public void setStore(Store store){
         this.store = store;
         store.getRatings().add(this);
+        store.updateRatingScore();
     }
 
     public Rating(User user, Store store, double rating, @Nullable String comment){
         this.writtenBy = user;
         this.store = store;
-        this.rating = rating;
+        this.score = rating;
         this.comment = comment;
     }
 }
