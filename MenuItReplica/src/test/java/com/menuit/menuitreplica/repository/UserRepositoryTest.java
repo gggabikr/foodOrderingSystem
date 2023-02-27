@@ -204,9 +204,9 @@ public class UserRepositoryTest {
         userRepository.save(user4);
         userRepository.save(user5);
 
-        List<User> role_table = userRepository.findByUserRole("ROLE_TABLE");
+        List<User> role_table = userRepository.findByUserRole(UserRole.ROLE_TABLE);
         List<User> role_owner = userRepository.findByUserRole(UserRole.ROLE_OWNER);
-        List<User> role_general = userRepository.findByUserRole("ROLE_GENERAL");
+        List<User> role_general = userRepository.findByUserRole(UserRole.ROLE_GENERAL);
 
         //then
         Assertions.assertEquals(2, role_owner.size());
@@ -251,8 +251,5 @@ public class UserRepositoryTest {
         Assertions.assertEquals(user3, userRepository.findByPhoneNumber("7780007508").get(0));
         Assertions.assertEquals(0, userRepository.findByPhoneNumber("7780001111").size());
         Assertions.assertEquals(0, userRepository.findByPhoneNumber("12341111").size());
-
-
-
     }
 }
