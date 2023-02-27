@@ -43,7 +43,7 @@ public class Order {
 
     private LocalDateTime scheduledPickUpTime;
 
-    @OneToOne(mappedBy = "order")
+    @OneToOne(mappedBy = "order", fetch = FetchType.LAZY)
     private Payment payment;
 
     //==Constructor==//
@@ -93,6 +93,12 @@ public class Order {
         this.store = store;
         store.getOrders().add(this);
     }
+
+    public void setPayment(Payment payment){
+        this.payment = payment;
+        payment.setOrder(this);
+    }
+
 
     protected void setOrderStatus(OrderStatus orderStatus){
         this.orderStatus = orderStatus;
