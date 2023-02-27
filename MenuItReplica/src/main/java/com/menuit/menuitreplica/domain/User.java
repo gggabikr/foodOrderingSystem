@@ -26,7 +26,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    private String username; //for the table, table name or table number
+    private String fullName; //for the table, table name or table number
 
     private String phone;
 
