@@ -32,7 +32,7 @@ public class Store {
     @OneToMany(mappedBy = "store")
     private List<Rating> ratings = new ArrayList<>();
 
-    private double ratingScore;
+    private double ratingScore = 0;
 
     @OneToMany(mappedBy = "store")
     private List<Hours> openHours = new ArrayList<>();

@@ -6,6 +6,7 @@ import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Table(uniqueConstraints=@UniqueConstraint(columnNames={"store_id", "user_id"}))
 @Entity
@@ -24,7 +25,7 @@ public class Rating {
     @JoinColumn(name = "user_id")
     private User writtenBy;
 
-    @NotEmpty(message = "rating is mandatory to leave a rating.")
+    @NotNull(message = "score is mandatory to leave a rating.")
     private double score; // 1~5 stars
 
     private String comment;
@@ -44,9 +45,9 @@ public class Rating {
     }
 
     public Rating(User user, Store store, double rating, @Nullable String comment){
-        this.writtenBy = user;
-        this.store = store;
+        this.setUser(user);
         this.score = rating;
+        this.setStore(store);
         this.comment = comment;
     }
 }
