@@ -210,10 +210,10 @@ public class UserServiceTest {
         //when
 
 
-        Assertions.assertEquals(user1, userRepository.findByPhoneNumber("7788097503").get(0).getId());
-        Assertions.assertEquals(user2, userRepository.findByPhoneNumber("7780000750").get(0).getId());
-        Assertions.assertEquals(user3, userRepository.findByPhoneNumber("7780007508").get(0).getId());
-        Assertions.assertEquals(0, userRepository.findByPhoneNumber("7780001111").size());
-        Assertions.assertEquals(0, userRepository.findByPhoneNumber("12341111").size());
+        Assertions.assertEquals(user1, userService.findByPhoneNumber("7788097503").get(0).getId());
+        Assertions.assertEquals(user2, userService.findByPhoneNumber("7780000750").get(0).getId());
+        Assertions.assertEquals(user3, userService.findByPhoneNumber("7780007508").get(0).getId());
+        Assertions.assertEquals(0, userService.findByPhoneNumber("7780001111").size());
+        Assertions.assertEquals(0, userService.findByPhoneNumber("12341111").size());
     }
 }
