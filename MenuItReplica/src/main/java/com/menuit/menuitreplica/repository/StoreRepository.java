@@ -14,17 +14,25 @@ public class StoreRepository {
 
     private final EntityManager em;
 
-    public Long register(User owner, Store store) throws Exception {
-        if(!owner.getRole().equals(UserRole.ROLE_OWNER)){
-            throw new IllegalArgumentException("The user's role must be owner to register new store.");
+//    public Long register(User owner, Store store) throws Exception {
+//        if(!owner.getRole().equals(UserRole.ROLE_OWNER)){
+//            throw new IllegalArgumentException("The user's role must be owner to register new store.");
+//        } else{
+//            if(this.findOne(store.getId()) != null){
+//                em.merge(store);
+//            } else{
+//                em.persist(store);
+//            }
+//            return store.getId();
+//        }
+//    }
+    public Long register(Store store) throws Exception {
+        if(store.getId() != null){
+            em.merge(store);
         } else{
-            if(this.findOne(store.getId()) != null){
-                em.merge(store);
-            } else{
-                em.persist(store);
-            }
-            return store.getId();
+            em.persist(store);
         }
+        return store.getId();
     }
 
     public Store findOne(Long id){
