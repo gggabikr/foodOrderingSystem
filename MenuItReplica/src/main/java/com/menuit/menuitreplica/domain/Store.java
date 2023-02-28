@@ -73,7 +73,7 @@ public class Store {
         hour.setStore(this);
     }
 
-    public void setCategory(Category category){
+    public void addCategory(Category category){
         this.getCategories().add(category);
         category.setStore(this);
     }
@@ -90,5 +90,9 @@ public class Store {
             sumOfRatings += rating.getScore();
         }
         this.setRatingScore(Math.round(sumOfRatings/getRatings().size()*100)/100.0);
+    }
+
+    public void toggleStatus(){
+        this.status = !this.status;
     }
 }
