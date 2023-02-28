@@ -5,8 +5,7 @@ import lombok.Setter;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+
 
 @Table(uniqueConstraints=@UniqueConstraint(columnNames={"store_id", "user_id"}))
 @Entity
@@ -25,8 +24,7 @@ public class Rating {
     @JoinColumn(name = "user_id")
     private User writtenBy;
 
-    @NotNull(message = "score is mandatory to leave a rating.")
-    private double score; // 1~5 stars
+    private double score; // 1~5 stars // not null
 
     private String comment;
 
