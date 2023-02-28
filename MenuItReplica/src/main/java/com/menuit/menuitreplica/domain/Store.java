@@ -61,6 +61,11 @@ public class Store {
 //    private String pictureOfStore;
 
     //==Relational methods==//
+    public void setOwner(User owner) {
+        this.owner = owner;
+        owner.addStore(this);
+    }
+
     public void setOpenHours(Hours hour){
         this.getOpenHours().removeIf(hours -> hours.getDayOfWeek() == hour.getDayOfWeek());
         this.openHours.add(hour);
