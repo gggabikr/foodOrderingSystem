@@ -66,9 +66,9 @@ public class StoreRepository {
                 .getResultList();
     }
 
-    public List<Store> findByStoreTag(Tag tag){
-        List<StoreTag> tag1 = em.createQuery("select ST from StoreTag ST where ST.tag =:tag", StoreTag.class)
-                .setParameter("tag", tag)
+    public List<Store> findByStoreTag(String tagName){
+        List<StoreTag> tag1 = em.createQuery("select ST from StoreTag ST where ST.tag.name =:tagName", StoreTag.class)
+                .setParameter("tagName", tagName)
                 .getResultList();
 
         List<Store> stores = new ArrayList<>();
