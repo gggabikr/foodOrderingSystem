@@ -25,6 +25,7 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     
     //Sign Up
+    @Transactional
     public Long join(String email, String fullName, String password, UserRole role, @Nullable String phoneNumber) throws Exception {
         User user = new User();
         user.setEmail(email
