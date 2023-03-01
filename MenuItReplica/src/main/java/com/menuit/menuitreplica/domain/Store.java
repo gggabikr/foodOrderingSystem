@@ -29,7 +29,7 @@ public class Store {
     @OneToMany(mappedBy = "store")
     private List<Order> orders = new ArrayList<>();
 
-    @OneToMany(mappedBy = "store")
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
     private List<Rating> ratings = new ArrayList<>();
 
     private double ratingScore = 0;
@@ -43,7 +43,7 @@ public class Store {
     private String storeDescription;
 
 //    @Enumerated(EnumType.STRING)
-    @OneToMany(mappedBy = "store")
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
     private List<StoreTag> tags = new ArrayList<>(); //food types eg. Chinese, Italian..
 
     @OneToMany(mappedBy = "store")
@@ -83,7 +83,7 @@ public class Store {
         category.setStore(this);
     }
 
-    public void setStoreTag(StoreTag storeTag){
+    public void addStoreTag(StoreTag storeTag){
         this.tags.add(storeTag);
         storeTag.setStore(this);
     }
