@@ -43,9 +43,8 @@ public class User {
     @OneToMany
     private List<Store> favStore;
 
-    //==Relational methods==//
     public void addStore(Store store){
         this.stores.add(store);
-        store.setOwner(this);
     }
+    //==Relational methods==//
 }
