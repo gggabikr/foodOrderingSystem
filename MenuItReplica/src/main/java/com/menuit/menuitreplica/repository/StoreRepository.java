@@ -83,4 +83,40 @@ public class StoreRepository {
                 .setParameter("score", score)
                 .getResultList();
     }
+
+    //==CATEGORY REPOSITORY==//
+
+    public Category findOneCategory(Long id){
+        return em.find(Category.class,id);
+    }
+
+    public List<Category> findAllCategories(){
+        return em.createQuery("select c from Category c", Category.class)
+                .getResultList();
+    }
+
+    public List<Category> findCategoriesByStore(Store store){
+        return em.createQuery("select c from Category c where c.store = :store", Category.class)
+                .setParameter("store", store)
+                .getResultList();
+    }
+
+    public Long addNewCategory(Store store, String name){
+        Category category = store.addCategory(name);
+        em.persist(category);
+        return category.getId();
+    }
+
+    public void deleteCategory(Store store, Category category) throws IllegalAccessException {
+        if(category.getItems().size() != 0){
+            throw new IllegalAccessException("Category's item list must be empty before proceeding it.");
+        } else{
+            if(category.getStore() != store){
+                throw new IllegalAccessException("This category does not belong to the given store.");
+            } else{
+                store.deleteCategory(category);
+                em.remove(category);
+            }
+        }
+    }
 }
