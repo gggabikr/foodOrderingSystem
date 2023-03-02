@@ -78,6 +78,7 @@ public class StoreRepositoryTest {
         storeRepository.register(store1);
         storeRepository.register(store2);
 
+
             //test for findByOwner
         List<Store> byOwner1 = storeRepository.findByOwner(user1);
         List<Store> byOwner2 = storeRepository.findByOwner(user2);
@@ -87,11 +88,9 @@ public class StoreRepositoryTest {
         Store foundStoreById2 = storeRepository.findOne(store2.getId());
 
 
-
             //test for findByPhoneNumber
         List<Store> byPhoneNumber1 = storeRepository.findByPhoneNumber("7788021324");
         List<Store> byPhoneNumber2 = storeRepository.findByPhoneNumber("6041234567");
-
 
             //test for findAll
         List<Store> all = storeRepository.findAll();
@@ -99,6 +98,14 @@ public class StoreRepositoryTest {
             //test for findByStatus
         List<Store> byStatusTrue = storeRepository.findByStatus(true);
         List<Store> byStatusFalse = storeRepository.findByStatus(false);
+
+            //test for categories
+        Long category1 = storeRepository.addNewCategory(store1, "Appetizers");
+        Long category2 = storeRepository.addNewCategory(store1, "Main dishes");
+        Long category3 = storeRepository.addNewCategory(store1, "Lunch Combos");
+        Long category4 = storeRepository.addNewCategory(store1, "Drinks");
+        Long category5 = storeRepository.addNewCategory(store2, "Dinner combos");
+        Long category6 = storeRepository.addNewCategory(store2, "Starters");
 
         //then
         Assertions.assertEquals(store1.getId(), byOwner1.get(0).getId());
@@ -113,6 +120,20 @@ public class StoreRepositoryTest {
         Assertions.assertFalse(byPhoneNumber1.contains(store2));
         Assertions.assertEquals(byPhoneNumber1.get(0), byStatusTrue.get(0));
         Assertions.assertEquals(byPhoneNumber2.get(0), byStatusFalse.get(0));
+        Assertions.assertEquals(store1.getCategories().get(0),storeRepository.findOneCategory(category1));
+        Assertions.assertEquals(store1.getCategories().get(3),storeRepository.findOneCategory(category4));
+        Assertions.assertEquals(4,storeRepository.findCategoriesByStore(store1).size());
+        Assertions.assertEquals("Appetizers",storeRepository.findCategoriesByStore(store1).get(0).getName());
+        Assertions.assertEquals("Lunch Combos",storeRepository.findCategoriesByStore(store1).get(2).getName());
+
+        storeRepository.deleteCategory(store1, storeRepository.findOneCategory(category2));
+        Assertions.assertEquals("Drinks",storeRepository.findCategoriesByStore(store1).get(2).getName());
+        Assertions.assertEquals(3,storeRepository.findCategoriesByStore(store1).size());
+        Assertions.assertEquals(2,storeRepository.findCategoriesByStore(store2).size());
+        Assertions.assertEquals(5, storeRepository.findAllCategories().size());
+
+
+
     }
 
 
@@ -228,9 +249,9 @@ public class StoreRepositoryTest {
         Assertions.assertFalse(user2.getRatings().contains(rating1));
         Assertions.assertFalse(user2.getRatings().contains(rating2));
 
-
     }
-//    왠지 모르겠지만 아래테스트가 작동을 정상적으로 하지 않는다. 서비스단에서 중복체크후 에러발생시키는 방식으로 변경.
+//    왠지 모르겠지만 아래테스트(같은 유저가 같은 스토어에 리뷰를 두개이상 남길경우 오류가 발생하는지에 대한 테스트)가
+//    작동을 정상적으로 하지 않는다. 서비스단에서 중복체크후 에러발생시키는 방식으로 변경.
 //    @Test(expected = DataIntegrityViolationException.class)
 //    @Rollback(false)
 ////    @Transactional
