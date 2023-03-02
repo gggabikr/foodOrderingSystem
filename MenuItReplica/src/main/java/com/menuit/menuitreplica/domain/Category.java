@@ -28,8 +28,5 @@ public class Category {
     private List<Item> items = new ArrayList<>();
 
     //==Relational methods==//
-    public void addItem(Item item){
-        this.getItems().add(item);
-        item.setCategory(this);
-    }
+
 }
