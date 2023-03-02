@@ -2,6 +2,7 @@ package com.menuit.menuitreplica.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 
@@ -30,6 +31,10 @@ public class OrderItem {
 
     //==Constructor==//
     public static OrderItem createOrderItem(Item item, int count){
+        return createOrderItem(item, count, "");
+    }
+
+    public static OrderItem createOrderItem(Item item, int count, String comment){
         OrderItem orderItem = new OrderItem();
         orderItem.setItem(item);
         if(item.getDiscountPercent() == 0 && item.getDiscountAmount() == 0){
@@ -42,6 +47,7 @@ public class OrderItem {
             orderItem.setDiscountPerItem(roundWithTwoDecimals(item.getPrice()-(item.getPrice() * (1-item.getDiscountPercent()))));
         }
         orderItem.setCount(count);
+        orderItem.setComment(comment);
 
         return orderItem;
     }
