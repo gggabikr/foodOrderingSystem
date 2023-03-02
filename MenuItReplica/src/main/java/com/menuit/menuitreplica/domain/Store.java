@@ -78,9 +78,22 @@ public class Store {
         hour.setStore(this);
     }
 
-    public void addCategory(Category category){
-        this.getCategories().add(category);
+//    public void addNewCategory(Category category){
+//        this.getCategories().add(category);
+//        category.setStore(this);
+//    }
+
+    public Category addCategory(String name){
+        Category category = new Category();
         category.setStore(this);
+        category.setName(name);
+        category.setCategoryOrder(getCategories().size());
+        this.categories.add(category);
+        return category;
+    }
+
+    public void deleteCategory(Category category){
+        this.categories.remove(category);
     }
 
     public void addStoreTag(StoreTag storeTag){
