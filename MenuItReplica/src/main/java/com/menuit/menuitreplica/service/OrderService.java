@@ -1,7 +1,10 @@
 package com.menuit.menuitreplica.service;
 
 import com.menuit.menuitreplica.domain.*;
+import com.menuit.menuitreplica.repository.ItemRepository;
 import com.menuit.menuitreplica.repository.OrderRepository;
+import com.menuit.menuitreplica.repository.StoreRepository;
+import com.menuit.menuitreplica.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +17,26 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderService {
 
+    private final UserRepository userRepository;
+    private final StoreRepository storeRepository;
+    private final ItemRepository itemRepository;
     private final OrderRepository orderRepository;
+
+
+    public Long createOrder(Long userId, Long storeId, String orderType,OrderItem... orderItems){
+        User user = userRepository.findOne(userId);
+        Store store = storeRepository.findOne(storeId);
+        OrderType orderType1 = OrderType.valueOf(orderType);
+        Order order;
+
+        if(orderType1.equals(OrderType.table)){
+            order = Order.createTableOrder(user, store, orderItems);
+        } else{
+            order = Order.createNonTableOrder(user, store, orderType1, orderItems);
+        }
+        orderRepository.createOrder(order);
+        return order.getId();
+    };
 
     public Order findOne(Long id) {
         return orderRepository.findOne(id);
@@ -51,5 +73,9 @@ public class OrderService {
 
     public List<Order> findByUserAndStore(User user, Store store){
         return orderRepository.findByUserAndStore(user, store);
+    }
+
+    public void cancelOrder(Order order){
+        //change order status;
     }
 }
