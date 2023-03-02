@@ -108,14 +108,20 @@ public class Payer {
         System.out.println("===============================");
         if(!this.getPayment().isGratuity()){
             System.out.println("========Tip suggestions========");
-            System.out.println("13%: " + Math.round(getSubtotal()*100)/100);
-            System.out.println("15%: " + Math.round(getSubtotal()*100)/100);
-            System.out.println("18%: " + Math.round(getSubtotal()*100)/100);
-            System.out.println("20%: " + Math.round(getSubtotal()*100)/100);
+            System.out.println("13%: " + Math.round(getSubtotal()*13)/100.0);
+            System.out.println("15%: " + Math.round(getSubtotal()*15)/100.0);
+            System.out.println("18%: " + Math.round(getSubtotal()*18)/100.0);
+            System.out.println("20%: " + Math.round(getSubtotal()*20)/100.0);
             System.out.println("=====" + LocalDateTime.now() + "=====");
             System.out.println("==========Thank you!===========");
         } else{
-            System.out.println("");
+            System.out.println("========Gratuity applied========");
+            int gratuityPercent = getPayment().getGratuityPercent();
+            double gratuityAmount = Math.round(getSubtotal() * gratuityPercent) / 100.0;
+            System.out.println(gratuityPercent + "%: " + gratuityAmount);
+            System.out.println("=====" + LocalDateTime.now() + "=====");
+            System.out.println("Amount due: $ "+ getTotal() + gratuityAmount);
+            System.out.println("==========Thank you!===========");
         }
     }
 
