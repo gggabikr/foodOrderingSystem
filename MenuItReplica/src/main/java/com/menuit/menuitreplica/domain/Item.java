@@ -6,8 +6,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 
 @Entity
-@Table(uniqueConstraints=@UniqueConstraint(columnNames={"store_id", "name"}))
-
 @Getter
 public class Item {
     @Id @GeneratedValue
@@ -48,7 +46,7 @@ public class Item {
     private boolean status; // 1 = available, 0 = Out of order
 
     @Enumerated(EnumType.STRING)
-    private ItemTag itemTags; //Popular, Best, Recommended, NoTag;
+    private ItemTag itemTag; //Popular, Best, Recommended, NoTag;
 
     @NotEmpty(message = "item type is mandatory.")
     @Enumerated(EnumType.STRING)
@@ -83,7 +81,7 @@ public class Item {
         this.minimumOrderCount = minimumOrderCount;
     }
     public void setItemTags(ItemTag itemTags) {
-        this.itemTags = itemTags;
+        this.itemTag = itemTags;
     }
     public void setItemType(ItemType itemType) {
         this.itemType = itemType;
@@ -94,26 +92,23 @@ public class Item {
     //==Constructor==//
     public Item(Store store, Category category, String name, double price){
         this.store = store;
-        category.addItem(this);
         this.name = name;
         this.price = price;
-        store.getItems().add(this);
         //default setting below
         this.itemType = ItemType.food;
         this.ageRestriction = false;
         this.minimumOrderCount = 1;
-        this.itemTags = ItemTag.NoTag;
+        this.itemTag = ItemTag.NoTag;
         this.discountAmount = 0;
         this.discountPercent = 0;
         this.status = true;
+        store.addItem(this, category);
     }
 
     public Item(Store store, Category category, String name, double price, String itemType){
         this.store = store;
-        category.addItem(this);
         this.name = name;
         this.price = price;
-        store.getItems().add(this);
         //default setting below
         this.itemType = ItemType.valueOf(itemType);
 
@@ -121,13 +116,17 @@ public class Item {
         this.ageRestriction = this.itemType == ItemType.alcoholic;
 
         this.minimumOrderCount = 1;
-        this.itemTags = ItemTag.NoTag;
+        this.itemTag = ItemTag.NoTag;
         this.discountAmount = 0;
         this.discountPercent = 0;
         this.status = true;
+        store.addItem(this, category);
+
     }
 
-    //==Relational methods==//
+    public void deleteItem(Item item){
+
+    }
 
     //==Business logics==//
     public void toggleStatus(){
