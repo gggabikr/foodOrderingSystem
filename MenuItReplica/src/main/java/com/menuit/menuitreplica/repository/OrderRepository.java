@@ -3,12 +3,10 @@ package com.menuit.menuitreplica.repository;
 import com.menuit.menuitreplica.domain.*;
 import com.menuit.menuitreplica.exception.DuplicationOfOrderException;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.sql.Timestamp;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
