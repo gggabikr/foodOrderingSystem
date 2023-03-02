@@ -52,11 +52,12 @@ public class Order {
         Order order = new Order();
         order.setUser(user);
         order.setStore(store);
-        for(OrderItem orderItem : orderItems){
-            order.addOrderItem(orderItem);
-        }
         order.orderType = OrderType.table;
         order.orderStatus = OrderStatus.preparing;
+        for(OrderItem orderItem : orderItems){
+            order.addOrderItem(orderItem);
+            orderItem.setOrder(order);
+        }
         return order;
     }
 
@@ -69,11 +70,12 @@ public class Order {
             Order order = new Order();
             order.setUser(user);
             order.setStore(store);
-            for(OrderItem orderItem : orderItems){
-                order.addOrderItem(orderItem);
-            }
             order.orderType = orderType;
             order.orderStatus = OrderStatus.confirming;
+            for(OrderItem orderItem : orderItems){
+                order.addOrderItem(orderItem);
+                orderItem.setOrder(order);
+            }
             return order;
         }
     }
@@ -149,38 +151,37 @@ public class Order {
 
 
 //    //==Business methods==//
-//    public double getSubtotal(){
-//        double subtotal = 0;
-//        for(OrderItem orderItem: getOrderItems()){
-//            double subtotalEach = orderItem.getOrderPrice() * orderItem.getCount();
-//            subtotal +=subtotalEach;
-//        }
-//        return Math.round(subtotal * 100) / 100.0;
-//    }
-//
-//    public double getGST(){
-//        return Math.round(getSubtotal() * 5)/100.0;
-//    }
-//
-//    public double getPST(){
-//        double alcoholic = 0;
-//        double soda = 0;
-//        for(OrderItem orderItem: getOrderItems()){
-//            double subtotalEach = orderItem.getOrderPrice() * orderItem.getCount();
-//            ItemType itemType = orderItem.getItem().getItemType();
-//
-//            if(itemType.equals(ItemType.alcoholic)){
-//                alcoholic += subtotalEach;
-//            } else if(itemType.equals(ItemType.soda)){
-//                soda += subtotalEach;
-//            }
-//        }
-//        double PstBeforeRounding = alcoholic * 0.1 + soda * 0.07;
-//        return Math.round(PstBeforeRounding*100)/100.0;
-//    }
-//
-//    public double getTotal(){
-//        return Math.round((getSubtotal()+getGST()+getPST())*100)/100.0;
-//    }
+    public double getSubtotal(){
+        double subtotal = 0;
+        for(OrderItem orderItem: getOrderItems()){
+            subtotal += orderItem.getTotalPrice();
+        }
+        return Math.round(subtotal * 100) / 100.0;
+    }
+
+    public double getGST(){
+        return Math.round(getSubtotal() * 5)/100.0;
+    }
+
+    public double getPST(){
+        double alcoholic = 0;
+        double soda = 0;
+        for(OrderItem orderItem: getOrderItems()){
+            double subtotalEach = orderItem.getOrderPrice() * orderItem.getCount();
+            ItemType itemType = orderItem.getItem().getItemType();
+
+            if(itemType.equals(ItemType.alcoholic)){
+                alcoholic += subtotalEach;
+            } else if(itemType.equals(ItemType.soda)){
+                soda += subtotalEach;
+            }
+        }
+        double PstBeforeRounding = alcoholic * 0.1 + soda * 0.07;
+        return Math.round(PstBeforeRounding*100)/100.0;
+    }
+
+    public double getTotal(){
+        return Math.round((getSubtotal()+getGST()+getPST())*100)/100.0;
+    }
 }
 
