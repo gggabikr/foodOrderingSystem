@@ -78,14 +78,12 @@ public class StoreServiceTest {
         Rating rating7 = new Rating(user1,store4, 5.0, null);
         Rating rating8 = new Rating(user2,store4, 5.0, null); //5.0
 
-//        ratingRepository.save(rating1);
-//        ratingRepository.save(rating2);
-//        ratingRepository.save(rating3);
-//        ratingRepository.save(rating4);
-//        ratingRepository.save(rating5);
-//        ratingRepository.save(rating6);
-//        ratingRepository.save(rating7);
-//        ratingRepository.save(rating8);
+        Long category1 = storeService.addNewCategory(store1, "Appetizers");
+        Long category2 = storeService.addNewCategory(store1, "Main dishes");
+        Long category3 = storeService.addNewCategory(store1, "Lunch Combos");
+        Long category4 = storeService.addNewCategory(store1, "Drinks");
+        Long category5 = storeService.addNewCategory(store2, "Dinner combos");
+        Long category6 = storeService.addNewCategory(store2, "Starters");
 
         //then
         Assertions.assertEquals(4, storeService.findAll().size());
@@ -106,6 +104,19 @@ public class StoreServiceTest {
         Assertions.assertTrue(store1.getRatings().contains(rating1));
         Assertions.assertTrue(store1.getRatings().contains(rating2));
         Assertions.assertEquals(4.25, store1.getRatingScore());
+
+        Assertions.assertEquals(store1.getCategories().get(0),storeService.findOneCategory(category1));
+        Assertions.assertEquals(store1.getCategories().get(3),storeService.findOneCategory(category4));
+        Assertions.assertEquals(4,storeService.findCategoriesByStore(store1).size());
+        Assertions.assertEquals("Appetizers",storeService.findCategoriesByStore(store1).get(0).getName());
+        Assertions.assertEquals("Lunch Combos",storeService.findCategoriesByStore(store1).get(2).getName());
+
+        storeService.deleteCategory(store1, storeService.findOneCategory(category2));
+        Assertions.assertEquals("Drinks",storeService.findCategoriesByStore(store1).get(2).getName());
+        Assertions.assertEquals(3,storeService.findCategoriesByStore(store1).size());
+        Assertions.assertEquals(2,storeService.findCategoriesByStore(store2).size());
+        Assertions.assertEquals(5, storeService.findAllCategories().size());
+
 
 
 
