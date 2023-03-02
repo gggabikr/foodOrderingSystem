@@ -54,6 +54,8 @@ public class Store {
 
     private int gratuity; //if number of customers is above certain number, it will set a tip with certain percentage.
 
+    private int gratuityPercent;
+
     private boolean status;
 
 //    private event??
@@ -94,6 +96,17 @@ public class Store {
 
     public void deleteCategory(Category category){
         this.categories.remove(category);
+    }
+
+    public void addItem(Item item, Category category){
+        this.getItems().add(item);
+        category.getItems().add(item);
+        item.setCategory(category);
+    }
+
+    public void deleteItem(Item item){
+        this.getItems().remove(item);
+        item.getCategory().getItems().remove(item);
     }
 
     public void addStoreTag(StoreTag storeTag){
