@@ -23,11 +23,17 @@ public class Payment {
 
     private double total;
 
+    private double additionalDiscountAmount; //special event, coupon, employee discount..etc
+
     private double totalTipAmount;
 
     private boolean isGratuity;
 
+    private int gratuityPercent;
+
     private boolean status; //true = fully paid, false = not yet paid fully
+
+    private String comment;
 
     //payer 이고 뭐고 다 때려치고 스트링으로 영수증 만들어내는거나 만들까 생각중.
     // 그경우엔 여기에 total, paidAmount, tipAmount 만들고 페이 될때마다 paidAmount 늘려서
@@ -39,22 +45,29 @@ public class Payment {
 //    private Store store;
 
     public static Payment createPayment(Order order, int numOfCustomers){
+        return createPayment(order,numOfCustomers,0,"");
+    }
+
+
+    public static Payment createPayment(Order order, int numOfCustomers, double additionalDiscountAmount, String comment){
         Payment payment = new Payment();
         List<OrderItem> orderItems = order.getOrderItems();
-        double total = orderItems.stream().mapToDouble(OrderItem::getTotalPrice).sum();
-        payment.setTotal(total);
+        payment.setTotal(order.getTotal());
 
         payment.setGratuity(order.getStore().getGratuity() <= numOfCustomers);
+        payment.setGratuityPercent(order.getStore().getGratuityPercent());
         payment.setStatus(false);
+        payment.setAdditionalDiscountAmount(additionalDiscountAmount);
+        payment.setComment(comment);
         payment.setTotalTipAmount(0);
 
         Payer payer = new Payer();
         payer.setPayment(payment);
         payer.setOrderItems(orderItems);
-        payer.setSubtotal(payer.getSubtotal());
-        payer.setPST(payer.getPST());
-        payer.setGST(payer.getGST());
-        payer.setTotal(payer.getTotal());
+        payer.setSubtotal(order.getSubtotal());
+        payer.setPST(order.getPST());
+        payer.setGST(order.getGST());
+        payer.setTotal(order.getTotal());
         payer.setPaid(false);
 
         payment.getPayers().add(payer);
@@ -141,7 +154,7 @@ public class Payment {
         }
 
         //difference between total and paid total.
-        double difference = getTotal() - paidAmount;
+        double difference = getTotal()-getAdditionalDiscountAmount() - paidAmount;
         //if paidAmount is bigger than the total or the difference is less than 20 cents, it will accept it as paid all.
         if (difference <=0 || Math.abs(difference)<0.2){
             setStatus(true);
@@ -151,7 +164,6 @@ public class Payment {
             return false;
         }
     }
-
 
     public void setTotalTipAmount(){
         double totalTipAmount = 0;
@@ -169,6 +181,14 @@ public class Payment {
         } else {
             throw new IllegalAccessException("Payer cannot be deleted unless its orderItem list is empty and payer did not make a payment.");
         }
+    }
+
+    public void toggleGratuity(){
+        this.isGratuity = !this.isGratuity;
+    }
+
+    public void setAdditionalDiscount(double amount){
+        this.setAdditionalDiscountAmount(amount);
     }
 
 
