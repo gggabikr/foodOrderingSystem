@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -67,4 +66,24 @@ public class StoreService {
     }
 
 
+    //==CATEGORY SERVICE==//
+    public Category findOneCategory(Long id){
+        return storeRepository.findOneCategory(id);
+    }
+
+    public List<Category> findAllCategories(){
+        return storeRepository.findAllCategories();
+    }
+
+    public List<Category> findCategoriesByStore(Store store){
+        return storeRepository.findCategoriesByStore(store);
+    }
+
+    public Long addNewCategory(Store store, String name){
+        return storeRepository.addNewCategory(store, name);
+    }
+
+    public void deleteCategory(Store store, Category category) throws IllegalAccessException {
+        storeRepository.deleteCategory(store,category);
+    }
 }
