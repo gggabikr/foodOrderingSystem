@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,10 @@ public class Payer {
     private List<OrderItem> orderItems = new ArrayList<>();
 
     private double subtotal;
+
+    private double additionalDiscount;
+
+    private String discountReason;
 
     private double GST;
 
@@ -52,8 +57,8 @@ public class Payer {
     }
 
     public double getGST(){
-        setGST(Math.round(getSubtotal() * 5)/100.0);
-        return Math.round(getSubtotal() * 5)/100.0;
+        setGST(Math.round((getSubtotal()-getAdditionalDiscount()) * 5)/100.0);
+        return Math.round((getSubtotal()-getAdditionalDiscount()) * 5)/100.0;
     }
 
     public double getPST(){
@@ -76,52 +81,143 @@ public class Payer {
     }
 
     public double getTotal(){
-        double total = Math.round((getSubtotal() + getGST() + getPST()) * 100) / 100.0;
+        double total = Math.round((getSubtotal() + getGST() + getPST()-getAdditionalDiscount()) * 100) / 100.0;
         setTotal(total);
         return total;
     }
 
-    public void moveItemToAnotherPayer(OrderItem orderItem, Payer payer){
+    public void moveItemToAnotherPayer(OrderItem orderItem, Payer payer, int count){
         if(getOrderItems().contains(orderItem)){
-            getOrderItems().remove(orderItem);
-            payer.getOrderItems().add(orderItem);
+            if(orderItem.getCount() == 1){
+                getOrderItems().remove(orderItem);
+                payer.getOrderItems().add(orderItem);
+            } else{
+                OrderItem newOrderItem = orderItem.clone();
+                newOrderItem.setCount(count);
+                if(orderItem.getCount()>count){
+                    orderItem.setCount(orderItem.getCount()-count);
+                } else {
+                    getOrderItems().remove(orderItem);
+                }
+                payer.getOrderItems().add(newOrderItem);
+            }
+
         } else {
             throw new NullPointerException("Selected orderItem is not exist for the payer.");
         }
     }
 
-    public void makeBill(){
-        System.out.println("===============Receipt==============");
-        Store store = this.getPayment().getOrder().getStore();
-        System.out.println("Store: "+ store.getName()+"    "+ "Order: " + this.getPayment().getOrder().getId());
-        System.out.println("Phone: " + store.getPhone());
-        System.out.println("Address: " + store.getAddress());
-        System.out.println("===============================");
-        System.out.println("Item               Qnt    Price");
-        for(OrderItem orderItem: this.getOrderItems()){
-            System.out.println(orderItem.getItem().getName() + "   1    " + orderItem.getOrderPrice());
-        }
-        System.out.println("Subtotal: " + getSubtotal());
-        System.out.println("GST: " + getGST());
-        System.out.println("PST: " + getPST());
-        System.out.println("Total: " + getTotal());
-        System.out.println("===============================");
-        if(!this.getPayment().isGratuity()){
-            System.out.println("========Tip suggestions========");
-            System.out.println("13%: " + Math.round(getSubtotal()*13)/100.0);
-            System.out.println("15%: " + Math.round(getSubtotal()*15)/100.0);
-            System.out.println("18%: " + Math.round(getSubtotal()*18)/100.0);
-            System.out.println("20%: " + Math.round(getSubtotal()*20)/100.0);
-            System.out.println("=====" + LocalDateTime.now() + "=====");
-            System.out.println("==========Thank you!===========");
+
+    public String makeStringBlock(int length, Long lon){
+        return makeStringBlock(length, Long.toString(lon));
+    }
+
+    public String makeStringBlock(int length, double db){
+        return makeStringBlock(length, Double.toString(db));
+    }
+
+    public String makeStringBlock(int length, int integer){
+        return makeStringBlock(length, Integer.toString(integer));
+    }
+
+    public String makeStringBlock(int length, String str){
+        String result = "";
+        int strLength = str.length();
+        if(strLength<length){
+            result += (str + " ".repeat(length-strLength));
         } else{
-            System.out.println("========Gratuity applied========");
+            result = str.substring(0,length-1) +" ";
+        }
+        return result;
+    }
+
+    public String makeStringBlockAtFront(int length, Long lon){
+        return makeStringBlockAtFront(length, Long.toString(lon));
+    }
+
+    public String makeStringBlockAtFront(int length, double db){
+        return makeStringBlockAtFront(length, Double.toString(db));
+    }
+
+    public String makeStringBlockAtFront(int length, int integer){
+        return makeStringBlockAtFront(length, Integer.toString(integer));
+    }
+
+
+    public String makeStringBlockAtFront(int length, String str){
+        //block at the front.
+        String result = "";
+        int strLength = str.length();
+        if(strLength<length){
+            result += (" ".repeat(length-strLength) + str);
+        } else{
+            result = str.substring(0,length-1);
+        }
+        return result;
+    }
+
+
+    public void makeBill(){
+        System.out.println("===============Receipt=================");
+        Store store = this.getPayment().getOrder().getStore();
+        System.out.println("Store: "+ makeStringBlock(19, store.getName())+ "Order: " + makeStringBlockAtFront(6,this.getPayment().getOrder().getId()));
+
+        String type = "";
+        OrderType orderType = this.getPayment().getOrder().getOrderType();
+        if(orderType.equals(OrderType.table)){
+            type = "Dine-In";
+        } else if(orderType.equals(OrderType.pickUp)){
+            type = "Pick-Up";
+        } else if(orderType.equals(OrderType.delivery)){
+            type = "Delivery";
+        } else {
+            type = "null";
+        }
+
+        System.out.println("Phone: " + store.getPhone() + "    Type: " + makeStringBlockAtFront(12, type));
+        if(orderType == OrderType.table){
+            System.out.println("Table #: " + this.getPayment().getOrder().getUser().getFullName());
+        } else{
+            System.out.println(makeStringBlock(20,"Customer Name:") + makeStringBlock(19,this.getPayment().getOrder().getUser().getFullName()));
+            System.out.println("Customer Contact:   " + this.getPayment().getOrder().getUser().getPhone());
+        }
+        System.out.println("Address: " + store.getAddressString());
+        System.out.println("=======================================");
+        System.out.println("Item               Qnt   Unit     Price");
+        for(OrderItem orderItem: this.getOrderItems()){
+            System.out.println(makeStringBlock(20,orderItem.getItem().getName()) + makeStringBlock(5, orderItem.getCount()) + makeStringBlock(7, orderItem.getOrderPrice()) + makeStringBlockAtFront(7, ("$"+ orderItem.getTotalPrice())));
+        }
+        System.out.println("=======================================");
+        System.out.println("Subtotal:"+ makeStringBlockAtFront(30,("$"+ getSubtotal())));
+
+        if(this.additionalDiscount != 0 && this.discountReason.length()>5){
+            System.out.println(makeStringBlock(30,discountReason) + makeStringBlockAtFront(9, ("-$" + additionalDiscount)));
+        }
+
+        System.out.println("GST:"+makeStringBlockAtFront(35, ("$" + getGST())));
+        System.out.println("PST:"+makeStringBlockAtFront(35, ("$" + getPST())));
+        System.out.println("Total:"+makeStringBlockAtFront(33, ("$" + getTotal())));
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formatDateTime = now.format(formatter);
+        if(this.getPayment().isGratuity()){
+            System.out.println("============Tip suggestions============");
+            System.out.println("13%: " + makeStringBlockAtFront(34,("$"+Math.round((getSubtotal()-getAdditionalDiscount())*13)/100.0)));
+            System.out.println("15%: " + makeStringBlockAtFront(34,("$"+Math.round((getSubtotal()-getAdditionalDiscount())*15)/100.0)));
+            System.out.println("18%: " + makeStringBlockAtFront(34,("$"+Math.round((getSubtotal()-getAdditionalDiscount())*18)/100.0)));
+            System.out.println("20%: " + makeStringBlockAtFront(34,("$"+Math.round((getSubtotal()-getAdditionalDiscount())*20)/100.0)));
+            System.out.println("==========" + formatDateTime + "==========");
+            System.out.println("==============Thank you!===============");
+        } else{
+            System.out.println("===========Gratuity applied============");
             int gratuityPercent = getPayment().getGratuityPercent();
             double gratuityAmount = Math.round(getSubtotal() * gratuityPercent) / 100.0;
-            System.out.println(gratuityPercent + "%: " + gratuityAmount);
-            System.out.println("=====" + LocalDateTime.now() + "=====");
-            System.out.println("Amount due: $ "+ getTotal() + gratuityAmount);
-            System.out.println("==========Thank you!===========");
+            System.out.println(makeStringBlock(19, gratuityPercent+"%:")+ makeStringBlockAtFront(20, "$"+gratuityAmount));
+            System.out.println("==========" + formatDateTime + "==========");
+            System.out.println("Amount due:"+ makeStringBlockAtFront(28, ("$"+Math.round((getTotal() + gratuityAmount)*100)/100.0)));
+            System.out.println("==============Thank you!===============");
+            System.out.println();
+            //this.paid == true 이면, 아래쪽에 페이먼트 타입, 카드 번호, 결제 금액 등등 해서 뽑히도록 (영수증역할) 하는것도 만들기
         }
     }
 
@@ -130,9 +226,9 @@ public class Payer {
     }
 
     public void setTipAmount(boolean boo, double number){
-        if(!boo){  //if boo = 0, number is percentage of tip
+        if(!boo){  //if boo = false, number is percentage of tip
             setTipAmount(tipPercentCalculator(number));
-        } else{  //if boo = 1, number is amount of tip
+        } else{  //if boo = true, number is amount of tip
             setTipAmount(number);
         }
     }
