@@ -43,8 +43,22 @@ public class OrderRepository {
         return order.getId();
     }
 
+    public void cancelOrder(Order order){
+        order.cancelOrder();
+    }
+
+    public void deleteOrderItemFromOrder(Long orderItemId){
+        OrderItem orderItem = findOneOrderItem(orderItemId);
+        orderItem.getOrder().getOrderItems().remove(orderItem);
+    }
+
+
     public Order findOne(Long id) {
         return em.find(Order.class, id);
+    }
+
+    public OrderItem findOneOrderItem(Long id){
+        return em.find(OrderItem.class, id);
     }
 
     public List<Order> findByUser(User user){
