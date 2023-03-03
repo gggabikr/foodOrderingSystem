@@ -42,23 +42,23 @@ public class Payment {
     @OneToMany
     private List<Payer> payers = new ArrayList<>();
 
-//    private Store store;
-
     public static Payment createPayment(Order order, int numOfCustomers){
         return createPayment(order,numOfCustomers,0,"");
     }
 
 
-    public static Payment createPayment(Order order, int numOfCustomers, double additionalDiscountAmount, String comment){
+    public static Payment createPayment(Order order, int numOfCustomers, double additionalDiscountAmount, String discountReason){
         Payment payment = new Payment();
-        List<OrderItem> orderItems = order.getOrderItems();
+        List<OrderItem> orderItems = new ArrayList<>();
+        for(OrderItem orderItem:order.getOrderItems()){
+            orderItems.add(orderItem.clone());
+        }
         payment.setTotal(order.getTotal());
-
         payment.setGratuity(order.getStore().getGratuity() <= numOfCustomers);
         payment.setGratuityPercent(order.getStore().getGratuityPercent());
         payment.setStatus(false);
         payment.setAdditionalDiscountAmount(additionalDiscountAmount);
-        payment.setComment(comment);
+        payment.setComment(discountReason);
         payment.setTotalTipAmount(0);
 
         Payer payer = new Payer();
@@ -69,6 +69,8 @@ public class Payment {
         payer.setGST(order.getGST());
         payer.setTotal(order.getTotal());
         payer.setPaid(false);
+        payer.setAdditionalDiscount(additionalDiscountAmount);
+        payer.setDiscountReason(discountReason);
 
         payment.getPayers().add(payer);
 
@@ -78,16 +80,22 @@ public class Payment {
     }
 
     public void makeEvenPayments(int numOfCustomers){
-        for(int i=1; i<numOfCustomers+1; i++){
+        for(int i=1; i<numOfCustomers; i++){
             Payer payer = new Payer();
             payer.setName("Customer " + i);
+            payer.setPayment(this);
             payer.setPaid(false);
             payers.add(payer);
         }
+
+        List<OrderItem> dividedOrderItems = new ArrayList<>();
+        for(OrderItem orderItem: getOrder().getOrderItems()){
+            dividedOrderItems.add(divideOrderItem(orderItem, numOfCustomers));
+        }
         for(Payer payer: payers){
-            for(OrderItem orderItem: getOrder().getOrderItems()){
-                payer.getOrderItems().add(divideOrderItem(orderItem, numOfCustomers));
-            }
+            payer.setOrderItems(dividedOrderItems);
+            payer.setAdditionalDiscount(Math.round((getAdditionalDiscountAmount()/numOfCustomers*100)/100.0));
+            payer.setDiscountReason(comment);
         }
     }
 
@@ -95,53 +103,17 @@ public class Payment {
         Payer payer = new Payer();
         payer.setName("Customer");
         payer.setPayment(this);
-        this.getPayers().add(payer);
         payer.setPaid(false);
         payers.add(payer);
         return payer;
     }
 
 
-
-//    public void makeEvenPayments(int numOfCustomers){
-//        List<Payer> customers = new ArrayList<>();
-//        for(int i=1; i<numOfCustomers+1; i++){
-//            Payer payer = new Payer();
-//            payer.setName("Customer " + i);
-//            customers.add(payer);
-//        }
-//        this.payers = customers;
-//
-//        for(Payer payer: customers){
-//            for(OrderItem orderItem: getOrder().getOrderItems()){
-//                payer.getOrderItems().add(divideOrderItem(orderItem, numOfCustomers));
-//            }
-//        }
-//        getOrder().getOrderItems().clear();
-//        getOrder().getOrderItems().
-//
-//    }
-
-//    public void makeOneMorePayer(){
-//        Payer payer = new Payer();
-//        payer.setName("Customer " + getPayers().size()+1);
-//        this.payers.add(payer);
-//    }
-//
-//    public void deleteLastPayer(){
-//        getPayers().remove(getPayers().size());
-//    }
-
     public OrderItem divideOrderItem(OrderItem orderItem, int num){
-//        double dividedOrderItem = Math.round((orderItem.getTotalPrice() / num)*100)/100.0;
         OrderItem dividedOrderItem = new OrderItem();
         dividedOrderItem.setItem(orderItem.getItem());
         dividedOrderItem.setOrderPrice(Math.round((orderItem.getOrderPrice()/num)*100)/100.0);
-        dividedOrderItem.setCount(1);
-
-//        for (Payer payer:payers) {
-//            payer.getOrderItems().add(dividedOrderItem);
-//        }
+        dividedOrderItem.setCount(orderItem.getCount());
         return dividedOrderItem;
     }
 
@@ -172,7 +144,7 @@ public class Payment {
                 totalTipAmount += payer.getTipAmount();
             }
         }
-        setTotalTipAmount(totalTipAmount);
+        setTotalTipAmount(Math.round(totalTipAmount*100)/100.0);
     }
 
     public void deletePayer(Payer payer) throws IllegalAccessException {
@@ -187,8 +159,15 @@ public class Payment {
         this.isGratuity = !this.isGratuity;
     }
 
-    public void setAdditionalDiscount(double amount){
-        this.setAdditionalDiscountAmount(amount);
+    public void setAdditionalDiscountAmount(double amount, String comment){
+        //need to set minimum length of comment to be 5 at the view page
+        this.additionalDiscountAmount = amount;
+        this.comment = comment;
+    }
+
+    public void setAdditionalDiscountPercent(int discountPercent, String comment){
+        this.additionalDiscountAmount = Math.round(this.getOrder().getSubtotal()*(100-discountPercent))/100.0;
+        this.comment = comment;
     }
 
 
