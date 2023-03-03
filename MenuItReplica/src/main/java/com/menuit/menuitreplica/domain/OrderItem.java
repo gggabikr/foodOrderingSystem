@@ -2,13 +2,12 @@ package com.menuit.menuitreplica.domain;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 
 @Entity
 @Getter @Setter
-public class OrderItem {
+public class OrderItem implements Cloneable{
     @Id @GeneratedValue
     @Column(name = "order_item_id")
     private Long id;
@@ -58,5 +57,21 @@ public class OrderItem {
 
     public double getTotalPrice(){
         return roundWithTwoDecimals(getOrderPrice()*getCount());
+    }
+
+    @Override
+    public OrderItem clone() {
+        try {
+            OrderItem clone = (OrderItem) super.clone();
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            clone.setItem(this.getItem());
+            clone.setOrderPrice(this.getOrderPrice());
+            clone.setComment(this.getComment());
+            clone.setDiscountPerItem(this.getDiscountPerItem());
+            clone.setCount(this.count);
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }
