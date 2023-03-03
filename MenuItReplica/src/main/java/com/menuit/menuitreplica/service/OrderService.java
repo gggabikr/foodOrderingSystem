@@ -23,20 +23,40 @@ public class OrderService {
     private final OrderRepository orderRepository;
 
 
-    public Long createOrder(Long userId, Long storeId, String orderType,OrderItem... orderItems){
+    public Long createOrder(Long userId, Long storeId, String orderType,OrderItem... orderItems) throws IllegalAccessException {
         User user = userRepository.findOne(userId);
         Store store = storeRepository.findOne(storeId);
         OrderType orderType1 = OrderType.valueOf(orderType);
+        for(OrderItem orderItem : orderItems){
+            if(!orderItem.getItem().getStore().equals(store)){
+                throw new IllegalArgumentException("All the items need to be of same store.");
+            }
+        }
         Order order;
 
         if(orderType1.equals(OrderType.table)){
+            if(!user.getRole().equals(UserRole.ROLE_TABLE)){
+                throw new IllegalAccessException("Non-table user cannot make table order.");
+            }
             order = Order.createTableOrder(user, store, orderItems);
         } else{
+            if(user.getRole().equals(UserRole.ROLE_TABLE)){
+                throw new IllegalAccessException("Table user cannot make non-table order.");
+            }
             order = Order.createNonTableOrder(user, store, orderType1, orderItems);
         }
         orderRepository.createOrder(order);
         return order.getId();
-    };
+    }
+
+    public void cancelOrder(Order order){
+        //change order status;
+        orderRepository.cancelOrder(order);
+    }
+
+    public void deleteOrderItemFromOrder(Long orderItemId){
+        orderRepository.deleteOrderItemFromOrder(orderItemId);
+    }
 
     public Order findOne(Long id) {
         return orderRepository.findOne(id);
@@ -57,12 +77,15 @@ public class OrderService {
     public List<Order> findByOrderType(OrderType orderType){
         return orderRepository.findByOrderType(orderType);
     }
+
     public List<Order> findByOrderStatus(OrderStatus orderStatus){
         return orderRepository.findByOrderStatus(orderStatus);
     }
+
     public List<Order> findOrdersBetweenTwoTimes(Timestamp startTime, Timestamp endTime){
         return orderRepository.findOrdersBetweenTwoTimes(startTime, endTime);
     }
+
     public List<Order> findByTotalAmount(double startAmount, double endAmount){
         return orderRepository.findByTotalAmount(startAmount, endAmount);
     }
@@ -73,9 +96,5 @@ public class OrderService {
 
     public List<Order> findByUserAndStore(User user, Store store){
         return orderRepository.findByUserAndStore(user, store);
-    }
-
-    public void cancelOrder(Order order){
-        //change order status;
     }
 }
