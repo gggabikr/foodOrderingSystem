@@ -1,11 +1,13 @@
 package com.menuit.menuitreplica.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Item {
     @Id @GeneratedValue
@@ -16,14 +18,12 @@ public class Item {
     @JoinColumn(name = "store_id")
     private Store store;
 
-    @NotEmpty(message = "Item name is mandatory.")
     private String name;
 
     private String description;
 
     private String allergyInfo;
 
-    @NotEmpty(message = "Item price is mandatory.")
     private double price;
 
     //discount on item, no matter who orders it.
@@ -33,7 +33,6 @@ public class Item {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
-    @NotEmpty(message = "Category is mandatory.")
     private Category category;
 
     private boolean ageRestriction; //1 = exist, 0 = not exist
@@ -42,17 +41,13 @@ public class Item {
 
     private int minimumOrderCount;
 
-    @NotEmpty(message = "Item status is mandatory.")
     private boolean status; // 1 = available, 0 = Out of order
 
     @Enumerated(EnumType.STRING)
     private ItemTag itemTag; //Popular, Best, Recommended, NoTag;
 
-    @NotEmpty(message = "item type is mandatory.")
     @Enumerated(EnumType.STRING)
     private ItemType itemType; //food, alcoholic, soda, nonSoda  // default: food
-
-    protected Item() {}
 
     public void setCategory(Category category) {
         this.category = category;
