@@ -30,6 +30,9 @@ public class User {
 
     private String phone;
 
+    @Embedded
+    private Address address;
+
     @OneToMany(mappedBy = "user")
     private List<Order> orders = new ArrayList<>();
 
