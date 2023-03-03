@@ -126,4 +126,24 @@ public class Store {
     public void toggleStatus(){
         this.status = !this.status;
     }
+
+    public String getAddressString(){
+        String address = "";
+        if(getAddress().getUnit()!= null){
+            address += getAddress().getUnit();
+        }
+        address += " " + getAddress().getStreet();
+        address += " " + getAddress().getCity();
+        if(address.length()>26){
+            address += "\n        ";
+        } else{
+            address += " " + getAddress().getProvince();
+            if(address.length()>26){
+                address += "\n        ";
+            }
+        }
+        address += " " + getAddress().getZipcode();
+
+        return address;
+    }
 }
