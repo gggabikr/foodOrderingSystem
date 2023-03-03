@@ -12,7 +12,6 @@ public class Address {
     private String province;
     private String city;
     private String street;
-    @Nullable
     private String unit;
     private String zipcode;
 
@@ -20,7 +19,14 @@ public class Address {
     protected Address() {
     }
 
-    public Address(String province ,String city, String street, @Nullable String unit, String zipcode) {
+    public Address(String province ,String city, String street, String zipcode) {
+        this.province = province;
+        this.city = city;
+        this.street = street;
+        this.zipcode = zipcode;
+    }
+
+    public Address(String province ,String city, String street, String unit, String zipcode) {
         this.province = province;
         this.city = city;
         this.street = street;
