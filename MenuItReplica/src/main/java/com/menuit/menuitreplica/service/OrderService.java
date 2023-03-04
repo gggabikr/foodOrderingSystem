@@ -49,9 +49,20 @@ public class OrderService {
         return order.getId();
     }
 
-    public void cancelOrder(Order order){
-        //change order status;
-        orderRepository.cancelOrder(order);
+    public void cancelOrder(Order order) throws IllegalAccessException {
+        boolean noPaymentExist = true;
+        for(Payer payer : order.getPayment().getPayers()){
+            if (payer.isPaid()) {
+                noPaymentExist = false;
+                break;
+            }
+        }
+        if(order.getPayment().isStatus() || !noPaymentExist){
+            throw new IllegalAccessException("Order cannot be cancelled unless no payment has made or all these are refunded.");
+        } else{
+            //change order status;
+            orderRepository.cancelOrder(order);
+        }
     }
 
     public void deleteOrderItemFromOrder(Long orderItemId){
@@ -60,6 +71,10 @@ public class OrderService {
 
     public Order findOne(Long id) {
         return orderRepository.findOne(id);
+    }
+
+    public OrderItem findOneOrderItem(Long id){
+        return orderRepository.findOneOrderItem(id);
     }
 
     public List<Order> findByUser(User user){
