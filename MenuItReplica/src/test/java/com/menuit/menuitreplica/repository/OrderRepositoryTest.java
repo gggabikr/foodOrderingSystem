@@ -179,11 +179,13 @@ public class OrderRepositoryTest {
         Order tableOrder2 = Order.createTableOrder(tableUser, store2, orderItemA, orderItemB, orderItemC, orderItemD);
 //        Order.createNonTableOrder(user2)
 
-        orderRepository.createOrder(tableOrder);
+        Long tableOrderId = orderRepository.createOrder(tableOrder);
         orderRepository.createOrder(nonTableOrder);
         orderRepository.createOrder(tableOrder2);
 
         //then
+
+        // 1. checking orders and their items, prices, etc
         Assertions.assertEquals(tableOrder, tableUser.getOrders().get(0));
         Assertions.assertEquals(nonTableOrder, generalUser.getOrders().get(0));
         Assertions.assertEquals(15.75*2+17.75*3, tableUser.getOrders().get(0).getSubtotal());
@@ -195,7 +197,7 @@ public class OrderRepositoryTest {
         Payment payment2 = Payment.createPayment(nonTableOrder, 20, 15, "employee discount");
         Payment payment3 = Payment.createPayment(tableOrder2, 5);
 
-//        test for receipt & its amounts, and dividing payments
+        // 2. test for receipt & its amounts, and dividing payments
         tableOrder.getPayment().getPayers().get(0).makeBill();
 //        tableOrder2.getPayment().makeEvenPayments(5);
 //        for(Payer payer: tableOrder2.getPayment().getPayers()){
@@ -203,20 +205,21 @@ public class OrderRepositoryTest {
 //            System.out.println("");
 //        }
 
-        nonTableOrder.getPayment().getPayers().get(0).makeBill();
+//        nonTableOrder.getPayment().getPayers().get(0).makeBill();
 //        nonTableOrder.getPayment().makeEvenPayments(3);
 //        nonTableOrder.getPayment().getPayers().get(0).makeBill();
 
+        // 3. moving orderItem between payer and check if it worked right
 //        testOrderPayer1.makeBill();
-//        tableOrder.getPayment().addPayer();
-//        Payer tableOrderPayer1 = tableOrder.getPayment().getPayers().get(0);
-//        Payer tableOrderPayer2 = tableOrder.getPayment().getPayers().get(1);
-//        tableOrderPayer1.moveItemToAnotherPayer(tableOrderPayer1.getOrderItems().get(0), payment1.getPayers().get(1), 2);
-//        tableOrderPayer1.moveItemToAnotherPayer(tableOrderPayer1.getOrderItems().get(0), payment1.getPayers().get(1), 1);
-//        tableOrder.getPayment().getPayers().get(0).makeBill();
-//        tableOrder.getPayment().getPayers().get(1).makeBill();
+        tableOrder.getPayment().addPayer();
+        Payer tableOrderPayer1 = tableOrder.getPayment().getPayers().get(0);
+        Payer tableOrderPayer2 = tableOrder.getPayment().getPayers().get(1);
+        tableOrderPayer1.moveItemToAnotherPayer(tableOrderPayer1.getOrderItems().get(0), payment1.getPayers().get(1), 2);
+        tableOrderPayer1.moveItemToAnotherPayer(tableOrderPayer1.getOrderItems().get(0), payment1.getPayers().get(1), 1);
+        tableOrder.getPayment().getPayers().get(0).makeBill();
+        tableOrder.getPayment().getPayers().get(1).makeBill();
 //
-//
+        // 4. check paying bill works fine and if it changes order status and record tip amount correctly
 //        tableOrderPayer1.setTipAmount(true, 5.33);
 //        tableOrderPayer1.payBill(PaymentMethod.valueOf("CREDIT"));
 //        tableOrderPayer2.setTipAmount(true, 7.39);
@@ -227,9 +230,30 @@ public class OrderRepositoryTest {
 //        System.out.println(tableOrder.getPayment().getTotalTipAmount()); //need to be 12.71 -> O
 //        System.out.println(tableOrder.getPayment().isStatus()); //need to be true -> O
 
-        //오더 캔슬
-        //payer 없애기
-        //payer이나 아이템 나눈거 전체 초기화하기 -> 초기화하기보다는 아예 새로 payment만드는게 나을지도?
+
+        //5. deleting payer
+//        tableOrder.getPayment().deletePayer(tableOrderPayer2); //error expected -> O
+//        tableOrderPayer2.moveItemToAnotherPayer(tableOrderPayer2.getOrderItems().get(0),tableOrderPayer1, tableOrderPayer2.getOrderItems().get(0).getCount());
+//        tableOrderPayer2.moveItemToAnotherPayer(tableOrderPayer2.getOrderItems().get(0),tableOrderPayer1, tableOrderPayer2.getOrderItems().get(0).getCount());
+//        tableOrder.getPayment().deletePayer(tableOrderPayer2);
+//        Assertions.assertEquals(1, payment1.getPayers().size());
+//        tableOrder.getPayment().getPayers().get(0).makeBill(); // checking if it returns same result as line 201
+
+
+        //6. Reset the payment to an initial status
+        //   (cancelling all the activities like moving items, paying, tipping, and making/deleting payers..etc)
+
+        Payment payment4 = Payment.createPayment(tableOrder, 3);
+        tableOrder.getPayment().getPayers().get(0).makeBill(); //-> checking if it returns same result as line 201
+        Assertions.assertNotSame(tableOrder.getPayment(), payment1);
+        Assertions.assertNotSame(orderRepository.findOne(tableOrderId).getPayment(), payment1);
+
+        Assertions.assertSame(tableOrder.getPayment(), payment4);
+        Assertions.assertSame(orderRepository.findOne(tableOrderId).getPayment(), payment4);
+
+
+        //7. cancelling order
+
 
 
 
