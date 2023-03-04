@@ -184,10 +184,10 @@ public class StoreRepositoryTest {
         store3.setName("Jason's Garden");
         store3.setStatus(true);
 
-        Rating rating1 = new Rating(user1, store1, 3.0, null);
-        Rating rating2 = new Rating(user1, store2, 4.0, null);
-        Rating rating3 = new Rating(user2, store1, 2.0, null);
-        Rating rating4 = new Rating(user2, store2, 5.0, null);
+        Rating rating1 = new Rating(user1, store1, 3, null);
+        Rating rating2 = new Rating(user1, store2, 4, null);
+        Rating rating3 = new Rating(user2, store1, 2, null);
+        Rating rating4 = new Rating(user2, store2, 5, null);
 
 
         //when
