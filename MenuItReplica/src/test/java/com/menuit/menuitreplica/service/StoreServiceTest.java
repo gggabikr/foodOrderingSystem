@@ -69,14 +69,14 @@ public class StoreServiceTest {
         store2.toggleStatus();
         store1.toggleStatus();
 
-        Rating rating1 = new Rating(user1,store1, 3.5, null);
-        Rating rating2 = new Rating(user2,store1, 5.0, null); //4.25
-        Rating rating3 = new Rating(user1,store2, 3.0, null);
-        Rating rating4 = new Rating(user2,store2, 2.0, null); //2.5
-        Rating rating5 = new Rating(user1,store3, 3.5, null);
-        Rating rating6 = new Rating(user2,store3, 3.5, null); //3.5
-        Rating rating7 = new Rating(user1,store4, 5.0, null);
-        Rating rating8 = new Rating(user2,store4, 5.0, null); //5.0
+        Rating rating1 = new Rating(user1,store1, 3, null);
+        Rating rating2 = new Rating(user2,store1, 5, null); //4.25
+        Rating rating3 = new Rating(user1,store2, 3, null);
+        Rating rating4 = new Rating(user2,store2, 2, null); //2.5
+        Rating rating5 = new Rating(user1,store3, 3, null);
+        Rating rating6 = new Rating(user2,store3, 3, null); //3.5
+        Rating rating7 = new Rating(user1,store4, 5, null);
+        Rating rating8 = new Rating(user2,store4, 5, null); //5.0
 
         Long category1 = storeService.addNewCategory(store1, "Appetizers");
         Long category2 = storeService.addNewCategory(store1, "Main dishes");
