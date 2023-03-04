@@ -24,9 +24,11 @@ public class Rating {
     @JoinColumn(name = "user_id")
     private User writtenBy;
 
-    private double score; // 1~5 stars // not null
+    private int score; // 1~5 stars // not null
 
     private String comment;
+
+    private boolean status; //true = active, visible  //false = un-active, non-visible, but still in records
 
     protected Rating() {}
 
@@ -42,10 +44,22 @@ public class Rating {
         store.updateRatingScore();
     }
 
-    public Rating(User user, Store store, double rating, @Nullable String comment){
+    public Rating(User user, Store store, int score){
         this.setUser(user);
-        this.score = rating;
+        this.score = score;
         this.setStore(store);
+        this.status = true;
+    }
+
+    public Rating(User user, Store store, int score, String comment){
+        this.setUser(user);
+        this.score = score;
+        this.setStore(store);
+        this.status = true;
         this.comment = comment;
+    }
+
+    public void toggleStatus(){
+        this.status = !this.status;
     }
 }
