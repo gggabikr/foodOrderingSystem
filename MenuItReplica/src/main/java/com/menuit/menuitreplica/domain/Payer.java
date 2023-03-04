@@ -88,20 +88,24 @@ public class Payer {
 
     public void moveItemToAnotherPayer(OrderItem orderItem, Payer payer, int count){
         if(getOrderItems().contains(orderItem)){
-            if(orderItem.getCount() == 1){
+            OrderItem newOrderItem = orderItem.clone();
+            newOrderItem.setCount(count);
+            if(orderItem.getCount()>count){
+                orderItem.setCount(orderItem.getCount()-count);
+            } else {
                 getOrderItems().remove(orderItem);
-                payer.getOrderItems().add(orderItem);
-            } else{
-                OrderItem newOrderItem = orderItem.clone();
-                newOrderItem.setCount(count);
-                if(orderItem.getCount()>count){
-                    orderItem.setCount(orderItem.getCount()-count);
-                } else {
-                    getOrderItems().remove(orderItem);
+            }
+            boolean foundSameItem = false;
+            for(OrderItem orderItem1:payer.getOrderItems()){
+                if(orderItem1.getItem().equals(newOrderItem.getItem())){
+                    orderItem1.setCount(orderItem1.getCount()+count);
+                    foundSameItem = true;
+                    break;
                 }
+            }
+            if(!foundSameItem){
                 payer.getOrderItems().add(newOrderItem);
             }
-
         } else {
             throw new NullPointerException("Selected orderItem is not exist for the payer.");
         }
@@ -216,9 +220,16 @@ public class Payer {
             System.out.println("==========" + formatDateTime + "==========");
             System.out.println("Amount due:"+ makeStringBlockAtFront(28, ("$"+Math.round((getTotal() + gratuityAmount)*100)/100.0)));
             System.out.println("==============Thank you!===============");
-            System.out.println();
-            //this.paid == true 이면, 아래쪽에 페이먼트 타입, 카드 번호, 결제 금액 등등 해서 뽑히도록 (영수증역할) 하는것도 만들기
         }
+        if(this.paid){
+            if(this.paymentMethod != PaymentMethod.CASH){
+                System.out.println(this.paymentMethod.name() + ": 0000-****-0000-****"); // to be replaced with actual card number
+            } else{
+                System.out.println(this.paymentMethod.name());
+            }
+            System.out.println("Paid amount: " + Math.round((this.total+ this.tipAmount)*100)/100.0);
+        }
+        System.out.println();
     }
 
     public double tipPercentCalculator(double percentage){
