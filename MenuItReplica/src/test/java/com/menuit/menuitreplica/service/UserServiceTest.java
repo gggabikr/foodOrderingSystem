@@ -33,7 +33,7 @@ public class UserServiceTest {
     public void JoinUser() throws Exception{
         //given
         //when
-        Long savedId = userService.join("gggabikr@gmail.com", "Jason Lee","aaabbcs", UserRole.ROLE_GENERAL,null);
+        Long savedId = userService.join("gggabikr@gmail.com", "Jason Lee","aaabbcs", "ROLE_GENERAL",null);
 
         //then
         assertEquals(savedId, userRepository.findByEmail("gggabikr@gmail.com").get(0).getId());
@@ -52,8 +52,8 @@ public class UserServiceTest {
 //            userService.join("breec@gmail.com","Breece Pak","cccwww", UserRole.ROLE_GENERAL);
 
 
-        userService.join("breece@gmail.com","Breece Park","bbbddd", UserRole.ROLE_GENERAL, null);
-        userService.join("breece@gmail.com","Breece Pak","cccwww", UserRole.ROLE_GENERAL, null); //error should be arisen
+        userService.join("breece@gmail.com","Breece Park","bbbddd", "ROLE_GENERAL", null);
+        userService.join("breece@gmail.com","Breece Pak","cccwww", "ROLE_GENERAL", null); //error should be arisen
 
         //then
         fail("error must be arisen");
@@ -63,8 +63,8 @@ public class UserServiceTest {
     @Test
     public void login() throws Exception{
         //given
-        userService.join("gggabikr@gmail.com","JasonLee", "abcdef", UserRole.ROLE_GENERAL, null);
-        userService.join("gggab@gmail.com","Jacob Lee", "abcdefgg", UserRole.ROLE_GENERAL, null);
+        userService.join("gggabikr@gmail.com","JasonLee", "abcdef", "ROLE_GENERAL", null);
+        userService.join("gggab@gmail.com","Jacob Lee", "abcdefgg", "ROLE_GENERAL", null);
 
 
         //when
@@ -122,7 +122,7 @@ public class UserServiceTest {
     @Test
     public void changePassword() throws Exception{
         //given
-        Long memberId = userService.join("gggabikr@gmail.com", "JasonLee", "abcdefG", UserRole.ROLE_GENERAL, null);
+        Long memberId = userService.join("gggabikr@gmail.com", "JasonLee", "abcdefG", "ROLE_GENERAL", null);
         Assertions.assertEquals(true, userService.login("gggabikr@gmail.com", "abcdefG"));
 
 
@@ -139,9 +139,9 @@ public class UserServiceTest {
     @Test
     public void findAllMembers() throws Exception{
         //given
-        userService.join("ggg1@gmail.com","Jason Lee", "aabbccd", UserRole.ROLE_GENERAL, null);
-        userService.join("ggg2@gmail.com","Breece Park", "ssddff", UserRole.ROLE_GENERAL, null);
-        userService.join("ggg3@gmail.com","Daniel Lee", "ffgghh", UserRole.ROLE_GENERAL, null);
+        userService.join("ggg1@gmail.com","Jason Lee", "aabbccd", "ROLE_GENERAL", null);
+        userService.join("ggg2@gmail.com","Breece Park", "ssddff", "ROLE_GENERAL", null);
+        userService.join("ggg3@gmail.com","Daniel Lee", "ffgghh", "ROLE_GENERAL", null);
 
         //when
         List<User> allUsers = userService.findAllUsers();
@@ -157,9 +157,9 @@ public class UserServiceTest {
     @Test
     public void findByEmail() throws Exception {
         //given
-        userService.join("gggabikr1@gmail.com", "Jason Lee", "aabbccde", UserRole.ROLE_GENERAL, "7788097503");
-        Long user2Id = userService.join("gggabikr2@gmail.com", "Justin Lee", "aabbccdeeee", UserRole.ROLE_GENERAL, "7780000750");
-        Long user3Id = userService.join("gggabikr3@gmail.com", "James Lee", "aabbccdeeee", UserRole.ROLE_GENERAL, "7780007508");
+        userService.join("gggabikr1@gmail.com", "Jason Lee", "aabbccde", "ROLE_GENERAL", "7788097503");
+        Long user2Id = userService.join("gggabikr2@gmail.com", "Justin Lee", "aabbccdeeee", "ROLE_GENERAL", "7780000750");
+        Long user3Id = userService.join("gggabikr3@gmail.com", "James Lee", "aabbccdeeee","ROLE_GENERAL", "7780007508");
 
 
         //when
@@ -178,11 +178,11 @@ public class UserServiceTest {
     @Test
     public void findByUserRole() throws Exception {
         //given
-        Long user1 = userService.join("gggabikr1@gmail.com", "Jason Lee", "aabbccde", UserRole.ROLE_GENERAL, "7788097503");
-        Long user2 = userService.join("gggabikr2@gmail.com", "Justin Lee", "aabbccdeeee", UserRole.ROLE_OWNER, "7780000750");
-        Long user3 = userService.join("gggabikr3@gmail.com", "James Lee", "aabbccdeeee", UserRole.ROLE_GENERAL, "7780007508");
-        Long user4 = userService.join("gggabikr4@gmail.com", "Jay Lee", "aabbcee", UserRole.ROLE_OWNER, "7788097503");
-        Long user5 = userService.join("gggabikr5@gmail.com", "John Lee", "aa3bcee", UserRole.ROLE_TABLE, "7780007508");
+        Long user1 = userService.join("gggabikr1@gmail.com", "Jason Lee", "aabbccde", "ROLE_GENERAL", "7788097503");
+        Long user2 = userService.join("gggabikr2@gmail.com", "Justin Lee", "aabbccdeeee", "ROLE_OWNER", "7780000750");
+        Long user3 = userService.join("gggabikr3@gmail.com", "James Lee", "aabbccdeeee", "ROLE_GENERAL", "7780007508");
+        Long user4 = userService.join("gggabikr4@gmail.com", "Jay Lee", "aabbcee", "ROLE_OWNER", "7788097503");
+        Long user5 = userService.join("gggabikr5@gmail.com", "John Lee", "aa3bcee", "ROLE_TABLE", "7780007508");
 
 
         //when
@@ -202,9 +202,9 @@ public class UserServiceTest {
     @Test
     public void findByPhoneNumber() throws Exception {
         //given
-        Long user1 = userService.join("gggabikr1@gmail.com", "Jason Lee", "aabbccde", UserRole.ROLE_GENERAL, "7788097503");
-        Long user2 = userService.join("gggabikr2@gmail.com", "Justin Lee", "aabbccdeeee", UserRole.ROLE_OWNER, "7780000750");
-        Long user3 = userService.join("gggabikr3@gmail.com", "James Lee", "aabbccdeeee", UserRole.ROLE_GENERAL, "7780007508");
+        Long user1 = userService.join("gggabikr1@gmail.com", "Jason Lee", "aabbccde", "ROLE_GENERAL", "7788097503");
+        Long user2 = userService.join("gggabikr2@gmail.com", "Justin Lee", "aabbccdeeee", "ROLE_OWNER", "7780000750");
+        Long user3 = userService.join("gggabikr3@gmail.com", "James Lee", "aabbccdeeee", "ROLE_GENERAL", "7780007508");
 
 
         //when

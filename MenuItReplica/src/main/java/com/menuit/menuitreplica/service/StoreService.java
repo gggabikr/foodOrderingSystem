@@ -2,6 +2,7 @@ package com.menuit.menuitreplica.service;
 
 import com.menuit.menuitreplica.domain.*;
 import com.menuit.menuitreplica.repository.StoreRepository;
+import com.menuit.menuitreplica.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,9 +15,11 @@ import java.util.List;
 public class StoreService {
 
     private final StoreRepository storeRepository;
+    private final UserRepository userRepository;
 
     @Transactional
-    public Long registerStore(String storeName, Address address, String phone, User user) throws Exception {
+    public Long registerStore(String storeName, Address address, String phone, Long userId) throws Exception {
+        User user = userRepository.findOne(userId);
         if(user.getRole() != UserRole.ROLE_OWNER){
             throw new IllegalArgumentException("The user's account type must be an OWNER.");
         } else{

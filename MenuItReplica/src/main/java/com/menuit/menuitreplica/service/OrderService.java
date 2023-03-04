@@ -24,9 +24,12 @@ public class OrderService {
     private final OrderRepository orderRepository;
 
 
-    public Long createOrder(Long userId, Long storeId, String orderType,OrderItem... orderItems) throws IllegalAccessException {
+    public Long createOrder(Long userId, Long storeId, String orderType, OrderItem... orderItems) throws IllegalAccessException {
         User user = userRepository.findOne(userId);
         Store store = storeRepository.findOne(storeId);
+
+        //orderItems will be made at the controller, and send them to here.
+
         OrderType orderType1 = OrderType.valueOf(orderType);
         for(OrderItem orderItem : orderItems){
             if(!orderItem.getItem().getStore().equals(store)){

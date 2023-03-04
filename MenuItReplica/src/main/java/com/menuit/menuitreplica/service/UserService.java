@@ -26,14 +26,14 @@ public class UserService implements UserDetailsService {
     
     //Sign Up
     @Transactional
-    public Long join(String email, String fullName, String password, UserRole role, @Nullable String phoneNumber) throws Exception {
+    public Long join(String email, String fullName, String password, String role, @Nullable String phoneNumber) throws Exception {
         User user = new User();
         user.setEmail(email
         );
         //checking for a username if it is duplicated.
         validateDuplicateEmail(email);
         user.setFullName(fullName);
-        user.setRole(role);
+        user.setRole(UserRole.valueOf(role));
         user.setPhone(phoneNumber);
 
         //encoding the password

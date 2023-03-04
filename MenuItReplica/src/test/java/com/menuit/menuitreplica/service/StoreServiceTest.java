@@ -36,7 +36,7 @@ public class StoreServiceTest {
         user1.setRole(UserRole.ROLE_OWNER);
 
         Address address = new Address("B.C", "Vancouver", "1990 41st Ave", "#303", "V6M 1Y4");
-        Long registerStore = storeService.registerStore("Jason's kitchen", address, "6049991111", user1);
+        Long registerStore = storeService.registerStore("Jason's kitchen", address, "6049991111", user1.getId());
 
         //when
         Store store = storeService.findOne(registerStore);
@@ -48,18 +48,18 @@ public class StoreServiceTest {
     @Test
     public void multiTest() throws Exception {
         //given, when
-        Long user1Id = userService.join("gggabikr@gmail.com", "JasonLee", "abcdef", UserRole.ROLE_OWNER, null);
-        Long user2Id = userService.join("gggab@gmail.com", "Jacob Lee", "abcdefgg", UserRole.ROLE_OWNER, null);
+        Long user1Id = userService.join("gggabikr@gmail.com", "JasonLee", "abcdef", "ROLE_OWNER", null);
+        Long user2Id = userService.join("gggab@gmail.com", "Jacob Lee", "abcdefgg", "ROLE_OWNER", null);
 
         User user1 = userService.findOneById(user1Id);
         User user2 = userService.findOneById(user2Id);
 
         Address address = new Address("B.C", "Vancouver", "1990 41st Ave", "#303", "V6M 1Y4");
 
-        Long registerStoreId1 = storeService.registerStore("Jason's kitchen", address, "6049991111", user1);
-        Long registerStoreId2 = storeService.registerStore("Jason's donut", address, "7788021324", user2);
-        Long registerStoreId3 = storeService.registerStore("Jason's Garden", address, "1231231234", user2);
-        Long registerStoreId4 = storeService.registerStore("Jason's kitchen", address, "2342342344", user1);
+        Long registerStoreId1 = storeService.registerStore("Jason's kitchen", address, "6049991111", user1.getId());
+        Long registerStoreId2 = storeService.registerStore("Jason's donut", address, "7788021324", user2.getId());
+        Long registerStoreId3 = storeService.registerStore("Jason's Garden", address, "1231231234", user2.getId());
+        Long registerStoreId4 = storeService.registerStore("Jason's kitchen", address, "2342342344", user1.getId());
 
         Store store1 = storeService.findOne(registerStoreId1);
         Store store2 = storeService.findOne(registerStoreId2);
@@ -127,18 +127,18 @@ public class StoreServiceTest {
     @Test
     public void findByStoreTag() throws Exception{
         //given
-        Long user1Id = userService.join("gggabikr@gmail.com", "JasonLee", "abcdef", UserRole.ROLE_OWNER, null);
-        Long user2Id = userService.join("gggab@gmail.com", "Jacob Lee", "abcdefgg", UserRole.ROLE_OWNER, null);
+        Long user1Id = userService.join("gggabikr@gmail.com", "JasonLee", "abcdef", "ROLE_OWNER", null);
+        Long user2Id = userService.join("gggab@gmail.com", "Jacob Lee", "abcdefgg", "ROLE_OWNER", null);
 
         User user1 = userService.findOneById(user1Id);
         User user2 = userService.findOneById(user2Id);
 
         Address address = new Address("B.C", "Vancouver", "1990 41st Ave", "#303", "V6M 1Y4");
 
-        Long registerStoreId1 = storeService.registerStore("Jason's kitchen", address, "6049991111", user1);
-        Long registerStoreId2 = storeService.registerStore("Jason's donut", address, "7788021324", user2);
-        Long registerStoreId3 = storeService.registerStore("Jason's Garden", address, "1231231234", user2);
-        Long registerStoreId4 = storeService.registerStore("Jason's kitchen", address, "2342342344", user1);
+        Long registerStoreId1 = storeService.registerStore("Jason's kitchen", address, "6049991111", user1.getId());
+        Long registerStoreId2 = storeService.registerStore("Jason's donut", address, "7788021324", user2.getId());
+        Long registerStoreId3 = storeService.registerStore("Jason's Garden", address, "1231231234", user2.getId());
+        Long registerStoreId4 = storeService.registerStore("Jason's kitchen", address, "2342342344", user1.getId());
 
         Store store1 = storeService.findOne(registerStoreId1);
         Store store2 = storeService.findOne(registerStoreId2);
