@@ -66,17 +66,17 @@ public class StoreRepository {
                 .getResultList();
     }
 
-    public List<Store> findByStoreTag(String tagName){
-        List<StoreTag> tag1 = em.createQuery("select ST from StoreTag ST where ST.tag.name =:tagName", StoreTag.class)
-                .setParameter("tagName", tagName)
-                .getResultList();
-
-        List<Store> stores = new ArrayList<>();
-        for (StoreTag st: tag1) {
-            stores.add(st.getStore());
-        }
-        return stores;
-    }
+//    public List<Store> findByStoreTag(String tagName){
+//        List<StoreTag> tag1 = em.createQuery("select ST from StoreTag ST where ST.tag.name =:tagName", StoreTag.class)
+//                .setParameter("tagName", tagName)
+//                .getResultList();
+//
+//        List<Store> stores = new ArrayList<>();
+//        for (StoreTag st: tag1) {
+//            stores.add(st.getStore());
+//        }
+//        return stores;
+//    }
 
     public List<Store> findByRatingScore(double score){
         return em.createQuery("select s from Store s where s.ratingScore >= :score", Store.class)

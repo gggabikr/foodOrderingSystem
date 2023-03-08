@@ -39,7 +39,7 @@ public class Payment {
     // 그경우엔 여기에 total, paidAmount, tipAmount 만들고 페이 될때마다 paidAmount 늘려서
     // total 과 paidAmount 의 차이가 5센트 이하가 되면 orderStatus 를 paidInFull 로 상태를 변경하는 방법을 사용할 예정.
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Payer> payers = new ArrayList<>();
 
     public static Payment createPayment(Order order, int numOfCustomers){

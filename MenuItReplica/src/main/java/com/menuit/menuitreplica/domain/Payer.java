@@ -204,7 +204,7 @@ public class Payer {
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formatDateTime = now.format(formatter);
-        if(this.getPayment().isGratuity()){
+        if(!this.getPayment().isGratuity()){
             System.out.println("============Tip suggestions============");
             System.out.println("13%: " + makeStringBlockAtFront(34,("$"+Math.round((getSubtotal()-getAdditionalDiscount())*13)/100.0)));
             System.out.println("15%: " + makeStringBlockAtFront(34,("$"+Math.round((getSubtotal()-getAdditionalDiscount())*15)/100.0)));
