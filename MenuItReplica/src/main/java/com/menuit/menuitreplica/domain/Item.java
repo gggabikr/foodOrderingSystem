@@ -81,6 +81,9 @@ public class Item {
     public void setItemType(ItemType itemType) {
         this.itemType = itemType;
     }
+    public void changeItemPrice(double price){
+        this.price = price;
+    }
 
 
 
