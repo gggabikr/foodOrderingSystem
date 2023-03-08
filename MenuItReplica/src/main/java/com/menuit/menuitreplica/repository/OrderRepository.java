@@ -20,9 +20,9 @@ public class OrderRepository {
     private final EntityManager em;
 
     public Long createOrder(Order order){
-        Store store = order.getStore();
-        User user = order.getUser();
-        List<Order> byUserAndStore = findByUserAndStore(user, store);
+//        Store store = order.getStore();
+//        User user = order.getUser();
+//        List<Order> byUserAndStore = findByUserAndStore(user, store);
 //        for(Order pastOrder: byUserAndStore){
 //            long orderedTime = pastOrder.getOrderTime().getTime();
 //            long now = Timestamp.valueOf(LocalDateTime.now()).getTime();
