@@ -2,11 +2,13 @@ package com.menuit.menuitreplica.service;
 
 import com.menuit.menuitreplica.domain.*;
 import com.menuit.menuitreplica.repository.StoreRepository;
+import com.menuit.menuitreplica.repository.TagRepository;
 import com.menuit.menuitreplica.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,9 +18,11 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
     private final UserRepository userRepository;
+    private final TagRepository tagRepository;
 
     @Transactional
     public Long registerStore(String storeName, Address address, String phone, Long userId) throws Exception {
+        //address will be made in controller and will be sent here
         User user = userRepository.findOne(userId);
         if(user.getRole() != UserRole.ROLE_OWNER){
             throw new IllegalArgumentException("The user's account type must be an OWNER.");
@@ -51,7 +55,8 @@ public class StoreService {
         return storeRepository.findByPhoneNumber(phoneNumber);
     }
 
-    public List<Store> findByOwner(User owner){
+    public List<Store> findByOwner(Long userId){
+        User owner = userRepository.findOne(userId);
         return storeRepository.findByOwner(owner);
     }
 
@@ -59,13 +64,23 @@ public class StoreService {
         return storeRepository.findByStatus(status);
     }
 
-    public List<Store> findByStoreTag(Tag tag){
-        String tagName = tag.getName();
-        return storeRepository.findByStoreTag(tagName);
+    public List<Store> findByStoreTagId(Long tagId){
+        List<StoreTag> storeTagsByTagId = tagRepository.findStoreTagsByTagId(tagId);
+        List<Store> stores = new ArrayList<>();
+        for(StoreTag storeTag: storeTagsByTagId){
+            stores.add(storeTag.getStore());
+        }
+        return stores;
     }
 
     public List<Store> findByStoreTagName(String tagName){
-        return storeRepository.findByStoreTag(tagName);
+        List<Tag> tagsWithGivenName = tagRepository.findByExactName(tagName);
+        List<Store> result = new ArrayList<>();
+        for(Tag tag: tagsWithGivenName){
+            List<Store> stores = findByStoreTagId(tag.getId());
+            result.addAll(stores);
+        }
+        return result;
     }
 
     public List<Store> findByRatingScore(double score){
@@ -82,15 +97,19 @@ public class StoreService {
         return storeRepository.findAllCategories();
     }
 
-    public List<Category> findCategoriesByStore(Store store){
+    public List<Category> findCategoriesByStore(Long storeId){
+        Store store = findOne(storeId);
         return storeRepository.findCategoriesByStore(store);
     }
 
-    public Long addNewCategory(Store store, String name){
+    public Long addNewCategory(Long storeId, String name){
+        Store store = findOne(storeId);
         return storeRepository.addNewCategory(store, name);
     }
 
-    public void deleteCategory(Store store, Category category) throws IllegalAccessException {
+    public void deleteCategory(Long storeId, Long categoryId) throws IllegalAccessException {
+        Store store = findOne(storeId);
+        Category category = findOneCategory(categoryId);
         storeRepository.deleteCategory(store,category);
     }
 }
