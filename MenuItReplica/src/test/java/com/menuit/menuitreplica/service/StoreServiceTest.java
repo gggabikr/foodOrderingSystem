@@ -78,12 +78,12 @@ public class StoreServiceTest {
         Rating rating7 = new Rating(user1,store4, 5, null);
         Rating rating8 = new Rating(user2,store4, 5, null); //5.0
 
-        Long category1 = storeService.addNewCategory(store1, "Appetizers");
-        Long category2 = storeService.addNewCategory(store1, "Main dishes");
-        Long category3 = storeService.addNewCategory(store1, "Lunch Combos");
-        Long category4 = storeService.addNewCategory(store1, "Drinks");
-        Long category5 = storeService.addNewCategory(store2, "Dinner combos");
-        Long category6 = storeService.addNewCategory(store2, "Starters");
+        Long category1 = storeService.addNewCategory(store1.getId(), "Appetizers");
+        Long category2 = storeService.addNewCategory(store1.getId(), "Main dishes");
+        Long category3 = storeService.addNewCategory(store1.getId(), "Lunch Combos");
+        Long category4 = storeService.addNewCategory(store1.getId(), "Drinks");
+        Long category5 = storeService.addNewCategory(store2.getId(), "Dinner combos");
+        Long category6 = storeService.addNewCategory(store2.getId(), "Starters");
 
         //then
         Assertions.assertEquals(4, storeService.findAll().size());
@@ -107,14 +107,14 @@ public class StoreServiceTest {
 
         Assertions.assertEquals(store1.getCategories().get(0),storeService.findOneCategory(category1));
         Assertions.assertEquals(store1.getCategories().get(3),storeService.findOneCategory(category4));
-        Assertions.assertEquals(4,storeService.findCategoriesByStore(store1).size());
-        Assertions.assertEquals("Appetizers",storeService.findCategoriesByStore(store1).get(0).getName());
-        Assertions.assertEquals("Lunch Combos",storeService.findCategoriesByStore(store1).get(2).getName());
+        Assertions.assertEquals(4,storeService.findCategoriesByStore(store1.getId()).size());
+        Assertions.assertEquals("Appetizers",storeService.findCategoriesByStore(store1.getId()).get(0).getName());
+        Assertions.assertEquals("Lunch Combos",storeService.findCategoriesByStore(store1.getId()).get(2).getName());
 
-        storeService.deleteCategory(store1, storeService.findOneCategory(category2));
-        Assertions.assertEquals("Drinks",storeService.findCategoriesByStore(store1).get(2).getName());
-        Assertions.assertEquals(3,storeService.findCategoriesByStore(store1).size());
-        Assertions.assertEquals(2,storeService.findCategoriesByStore(store2).size());
+        storeService.deleteCategory(store1.getId(), category2);
+        Assertions.assertEquals("Drinks",storeService.findCategoriesByStore(store1.getId()).get(2).getName());
+        Assertions.assertEquals(3,storeService.findCategoriesByStore(store1.getId()).size());
+        Assertions.assertEquals(2,storeService.findCategoriesByStore(store2.getId()).size());
         Assertions.assertEquals(5, storeService.findAllCategories().size());
 
 
@@ -159,9 +159,9 @@ public class StoreServiceTest {
 
 
         //then
-        Assertions.assertEquals(2, storeService.findByStoreTag(tag1).size());
-        Assertions.assertEquals(store1, storeService.findByStoreTag(tag1).get(0));
-        Assertions.assertEquals(store3, storeService.findByStoreTag(tag1).get(1));
+        Assertions.assertEquals(2, storeService.findByStoreTagId(tag1.getId()).size());
+        Assertions.assertEquals(store1, storeService.findByStoreTagId(tag1.getId()).get(0));
+        Assertions.assertEquals(store3, storeService.findByStoreTagId(tag1.getId()).get(1));
         Assertions.assertEquals(2, storeService.findByStoreTagName("Chinese").size());
         Assertions.assertEquals(store1, storeService.findByStoreTagName("Chinese").get(0));
         Assertions.assertEquals(store3, storeService.findByStoreTagName("Chinese").get(1));
