@@ -134,16 +134,45 @@ public class Store {
         }
         address += " " + getAddress().getStreet();
         address += " " + getAddress().getCity();
-        if(address.length()>26){
-            address += "\n        ";
-        } else{
-            address += " " + getAddress().getProvince();
-            if(address.length()>26){
-                address += "\n        ";
-            }
-        }
+        address += " " + getAddress().getProvince();
         address += " " + getAddress().getZipcode();
 
-        return address;
+        if (address.length() <= 28) {
+            // If address is null or has length <= 28, return it as is
+            return address;
+        }
+
+        // Split address into words
+        String[] words = address.split(" ");
+
+        // StringBuilder to construct the output
+        StringBuilder sb = new StringBuilder();
+
+        // First word goes on first line
+        sb.append(words[0]);
+        int lineLength = words[0].length();
+
+        // Add remaining words, wrapping to new line if line length exceeds 28 characters
+        for (int i = 1; i < words.length; i++) {
+            String word = words[i];
+            int wordLength = word.length();
+
+            if (lineLength + 1 + wordLength > 28) {
+                // If adding this word to the current line would exceed 28 characters,
+                // start a new line and reset lineLength
+                sb.append("\n         ");
+                lineLength = 0;
+            } else {
+                // Otherwise, add a space and update lineLength
+                sb.append(" ");
+                lineLength++;
+            }
+
+            sb.append(word);
+            lineLength += wordLength;
+        }
+
+        // Return the constructed string
+        return sb.toString();
     }
 }
