@@ -23,16 +23,16 @@ public class OrderRepository {
         Store store = order.getStore();
         User user = order.getUser();
         List<Order> byUserAndStore = findByUserAndStore(user, store);
-        for(Order pastOrder: byUserAndStore){
-            long orderedTime = pastOrder.getOrderTime().getTime();
-            long now = Timestamp.valueOf(LocalDateTime.now()).getTime();
-            long diffInSeconds = Math.abs(TimeUnit.MICROSECONDS.toSeconds(now - orderedTime));
-            // order made by same user to same store is exist in last 3 mins,
-            // and it is not cancelled, throw an error.
-            if(diffInSeconds<180 && pastOrder.getOrderStatus() != OrderStatus.cancelled){
-                throw new DuplicationOfOrderException();
-            }
-        }
+//        for(Order pastOrder: byUserAndStore){
+//            long orderedTime = pastOrder.getOrderTime().getTime();
+//            long now = Timestamp.valueOf(LocalDateTime.now()).getTime();
+//            long diffInSeconds = Math.abs(TimeUnit.MICROSECONDS.toSeconds(now - orderedTime));
+//            // order made by same user to same store is exist in last 3 mins,
+//            // and it is not cancelled, throw an error.
+//            if(diffInSeconds<180 && pastOrder.getOrderStatus() != OrderStatus.cancelled){
+//                throw new DuplicationOfOrderException();
+//            }
+//        }
         if(order.getId() != null){
             if(Objects.equals(order.getId(), findOne(order.getId()).getId())){
                 em.merge(order);
