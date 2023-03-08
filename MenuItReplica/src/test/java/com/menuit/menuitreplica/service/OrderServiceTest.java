@@ -65,8 +65,6 @@ public class OrderServiceTest {
 
         OrderItem orderItem1 = OrderItem.createOrderItem(item1, 2, "");
         OrderItem orderItem2 = OrderItem.createOrderItem(item2, 1);
-        OrderItem orderItem3 = OrderItem.createOrderItem(item1, 2,"");
-        OrderItem orderItem4 = OrderItem.createOrderItem(item2, 4);
 
 
         Long orderId = orderService.createOrder(userId, storeId, "pickUp", orderItem1, orderItem2);
@@ -75,29 +73,55 @@ public class OrderServiceTest {
         assertEquals(orderId, orderService.findByStore(storeId).get(0).getId());
         assertEquals(4.55*2+13.25, order.getSubtotal(),0.0001);
 
+        //TODO: check receipt of order; change price of item and make another order.
+        // check receipt of both orders if the price change is applied for 2nd one and NOT applied for 1st one.
+        // (also check the whole receipt whether the total prices and things are correct for both)
+        // Passed!
+
+        //TODO: Delete item after these two orders, and check receipt again if an error is arise.
+        // Passed!
+
         Payment payment = Payment.createPayment(order, 1);
         assertEquals(payment.getPayers().get(0).getTotal(), order.getTotal(), 0.0001);
         payment.getPayers().get(0).makeBill();
-        item1.changeItemPrice(5.25);
-        payment.getPayers().get(0).makeBill();
         assertEquals(4.55*2+13.25, order.getSubtotal(),0.0001);
 
-//        Long order2Id = orderRepository.createOrder(Order.createTableOrder(userService.findOneById(userId),store,orderItem3));
+        //price changed for fries, and 50% discount event on Beef taco
+        item1.changeItemPrice(5.25);
+        item2.changeItemPrice(6.63);
+        OrderItem orderItem3 = OrderItem.createOrderItem(item1, 1,"");
+        OrderItem orderItem4 = OrderItem.createOrderItem(item2,1,"");
 
-        Long order2Id = orderService.createOrder(userId, storeId, "pickUp", orderItem3);
+        Long order2Id = orderService.createOrder(userId, storeId, "pickUp", orderItem3, orderItem4);
         Order order2 = orderService.findOne(order2Id);
-        Payment.createPayment(order2,20);
-        assertEquals(5.25*2, order2.getSubtotal(),0.0001);
+        Payment payment2 = Payment.createPayment(order2, 20);
+        assertEquals(5.25+6.63, order2.getSubtotal(),0.0001);
         order2.getPayment().getPayers().get(0).makeBill();
+        itemService.removeItem(storeId,item2id);
+        payment.getPayers().get(0).makeBill();
+        payment2.getPayers().get(0).makeBill();
+        payment2.getPayers().get(0).payBill(PaymentMethod.valueOf("CREDIT"));
+
+        OrderItem orderItem5 = OrderItem.createOrderItem(item1, 2);
+        Long order3Id = orderService.createOrder(userId, storeId, "pickUp", orderItem5);
+        Order order3 = orderService.findOne(order3Id);
+        Payment payment3 = Payment.createPayment(order3, 1);
+        payment3.makeEvenPayments(2);
 
 
-        //TODO: 오더하고 기록 확인, 아이템 가격바꾼후 오더하고 둘 다의 기록 확인. 기록에 이상없는지(기존 오더의 토탈 가격등이 달라지지않았는지.)
-        //TODO: 그후 아이템 삭제. 다시 기록확인. 그래도 정상적으로 기록확인이 되는지.
+        payment3.getPayers().get(1).setTipAmount(false, 20);
+        payment3.getPayers().get(1).payBill(PaymentMethod.valueOf("CASH"));
+
+        payment3.printBillsForAllPayers();
+
+        //TODO: cancel order if any payment has made, cannot be cancelled. otherwise, proceed.
+//        orderService.cancelOrder(orderId); // should be ok -> Passed!
+//        orderService.cancelOrder(order2Id); //error! -> Passed!
+//        orderService.cancelOrder(order3Id); //error! -> Passed!
+
+        //
     }
 
-    @Test
-    public void cancelOrder() {
-    }
 
     @Test
     public void deleteOrderItemFromOrder() {
