@@ -122,10 +122,6 @@ public class Item {
 
     }
 
-    public void deleteItem(Item item){
-
-    }
-
     //==Business logics==//
     public void toggleStatus(){
         this.status = !this.status;
