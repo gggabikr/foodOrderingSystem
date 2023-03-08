@@ -170,6 +170,11 @@ public class Payment {
         this.comment = comment;
     }
 
+    public void printBillsForAllPayers(){
+        for(Payer payer: getPayers()){
+            payer.makeBill();
+        }
+    }
 
     //==결제 방법에 따라 다른 결제 방식, 단계 구현하기==//
 
