@@ -1,7 +1,6 @@
 package com.menuit.menuitreplica.repository;
 
 
-import com.menuit.menuitreplica.domain.Rating;
 import com.menuit.menuitreplica.domain.StoreTag;
 import com.menuit.menuitreplica.domain.Tag;
 import lombok.RequiredArgsConstructor;
