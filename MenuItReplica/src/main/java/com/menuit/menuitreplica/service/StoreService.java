@@ -107,6 +107,7 @@ public class StoreService {
         return storeRepository.addNewCategory(store, name);
     }
 
+    @Transactional
     public void deleteCategory(Long storeId, Long categoryId) throws IllegalAccessException {
         Store store = findOne(storeId);
         Category category = findOneCategory(categoryId);
