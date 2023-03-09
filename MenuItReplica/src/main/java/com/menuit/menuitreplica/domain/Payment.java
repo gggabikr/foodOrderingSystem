@@ -140,9 +140,9 @@ public class Payment {
     public void setTotalTipAmount(){
         double totalTipAmount = 0;
         for (Payer payer: getPayers()){
-            if(payer.isPaid()) {
+//            if(payer.isPaid()) {
                 totalTipAmount += payer.getTipAmount();
-            }
+//            }
         }
         setTotalTipAmount(Math.round(totalTipAmount*100)/100.0);
     }
