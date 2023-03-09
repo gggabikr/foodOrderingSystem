@@ -24,7 +24,7 @@ public class Payer {
     private String name;
 
     //임시.
-    @ManyToMany
+    @ManyToMany @Transient
     private List<OrderItem> orderItems = new ArrayList<>();
 
     private double subtotal;
@@ -46,6 +46,10 @@ public class Payer {
 //    private double paidAmountInclTip;
 
     private boolean paid; // 0 = not yet paid, 1 = paid
+
+    @Column(name = "receipt")
+    @Lob
+    private String receiptData;
 
     public double getSubtotal(){
         double subtotal = 0;
@@ -242,6 +246,10 @@ public class Payer {
 
         String toString = sb.toString();
 
+        if(this.paid){
+            this.receiptData = toString;
+        }
+
         //printing result string to see if it looks okay
         System.out.println(toString);
         return toString;
@@ -329,12 +337,14 @@ public class Payer {
         return Math.round(getSubtotal()*percentage)/100.0;
     }
 
+    //TODO: Gratuity applied 일때 자동적으로 팁 지정되도록!!!
     public void setTipAmount(boolean boo, double number){
         if(!boo){  //if boo = false, number is percentage of tip
             setTipAmount(tipPercentCalculator(number));
         } else{  //if boo = true, number is amount of tip
             setTipAmount(number);
         }
+        this.payment.setTotalTipAmount();
     }
 
     public double payBill(PaymentMethod paymentMethod){
