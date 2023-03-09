@@ -22,6 +22,7 @@ public class RatingService {
     private final UserRepository userRepository;
     private final StoreRepository storeRepository;
 
+    @Transactional
     public Long save(Long userId, Long storeId, int score, @Nullable String comment) throws Exception {
         User user = userRepository.findOne(userId);
         Store store = storeRepository.findOne(storeId);
