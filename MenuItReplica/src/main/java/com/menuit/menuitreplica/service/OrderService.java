@@ -23,7 +23,7 @@ public class OrderService {
     private final ItemRepository itemRepository;
     private final OrderRepository orderRepository;
 
-
+    @Transactional
     public Long createOrder(Long userId, Long storeId, String orderType, OrderItem... orderItems) throws IllegalAccessException {
         User user = userRepository.findOne(userId);
         Store store = storeRepository.findOne(storeId);
@@ -53,6 +53,7 @@ public class OrderService {
         return order.getId();
     }
 
+    @Transactional
     public void cancelOrder(Long orderId) throws IllegalAccessException {
         Order order = orderRepository.findOne(orderId);
 
@@ -71,7 +72,13 @@ public class OrderService {
         }
     }
 
-    public void deleteOrderItemFromOrder(Long orderItemId){
+    @Transactional
+    public void deleteOrderItemFromOrder(Long orderId, Long orderItemId) throws IllegalAccessException {
+        Order order = orderRepository.findOne(orderId);
+        OrderItem orderItem = orderRepository.findOneOrderItem(orderItemId);
+        if(orderItem.getOrder() != order){
+            throw new IllegalAccessException("This orderItem does not belong to the order.");
+        }
         orderRepository.deleteOrderItemFromOrder(orderItemId);
     }
 
@@ -94,8 +101,8 @@ public class OrderService {
     }
 
     public List<Order> findByItem(Long itemId){
-        Item item = itemRepository.findOne(itemId);
-        return orderRepository.findByItem(item);
+//        Item item = itemRepository.findOne(itemId);
+        return orderRepository.findByItem(itemId);
     }
 
     public List<Order> findByOrderType(String str){
@@ -124,10 +131,16 @@ public class OrderService {
     }
 
     public List<Order> findByTotalAmount(double startAmount, double endAmount){
+        if (startAmount>=endAmount){
+            return orderRepository.findByTotalAmount(endAmount, startAmount);
+        }
         return orderRepository.findByTotalAmount(startAmount, endAmount);
     }
 
     public List<Order> findByTotalTipAmount(double startAmount, double endAmount){
+        if (startAmount>=endAmount){
+            return orderRepository.findByTotalTipAmount(endAmount, startAmount);
+        }
         return orderRepository.findByTotalTipAmount(startAmount, endAmount);
     }
 
