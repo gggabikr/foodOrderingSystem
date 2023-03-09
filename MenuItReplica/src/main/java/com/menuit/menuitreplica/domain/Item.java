@@ -41,7 +41,10 @@ public class Item {
 
     private int minimumOrderCount;
 
-    private boolean status; // 1 = available, 0 = Out of order
+    private boolean status; // 1 = available to order, 0 = Out of order
+
+    @Column(name = "deleted")
+    private boolean deleted; // true = registered, false = logically deleted
 
     @Enumerated(EnumType.STRING)
     private ItemTag itemTag; //Popular, Best, Recommended, NoTag;
@@ -100,6 +103,7 @@ public class Item {
         this.discountAmount = 0;
         this.discountPercent = 0;
         this.status = true;
+        this.deleted = false;
         store.addItem(this, category);
     }
 
@@ -109,6 +113,7 @@ public class Item {
         this.price = price;
         //default setting below
         this.itemType = ItemType.valueOf(itemType);
+        this.deleted = false;
 
         //alcoholic-> true, else -> false
         this.ageRestriction = this.itemType == ItemType.alcoholic;
@@ -125,5 +130,9 @@ public class Item {
     //==Business logics==//
     public void toggleStatus(){
         this.status = !this.status;
+    }
+
+    public void deleteItem(){
+        this.deleted = false;
     }
 }
