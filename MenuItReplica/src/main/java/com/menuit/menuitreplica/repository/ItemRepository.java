@@ -33,7 +33,8 @@ public class ItemRepository {
             throw new IllegalAccessException("This item doesn't belong to the given store.");
         } else{
             store.deleteItem(item);
-            em.remove(item);
+            item.deleteItem(); //logically delete item by set 'deleted' value to be true;
+//            em.remove(item);
         }
     }
 
