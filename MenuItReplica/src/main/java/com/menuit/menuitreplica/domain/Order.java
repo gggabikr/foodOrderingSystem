@@ -130,8 +130,8 @@ public class Order {
             if(getOrderStatus().equals(OrderStatus.confirming)){
                 setOrderStatus(OrderStatus.preparing);
             } else if(getOrderStatus().equals(OrderStatus.preparing)){
-                setOrderStatus(OrderStatus.ReadyForPickUp);
-            } else if(getOrderStatus().equals(OrderStatus.ReadyForPickUp)){
+                setOrderStatus(OrderStatus.readyForPickUp);
+            } else if(getOrderStatus().equals(OrderStatus.readyForPickUp)){
                 setOrderStatus(OrderStatus.completed);
             } else if(getOrderStatus().equals(OrderStatus.completed)){
                 setOrderStatus(OrderStatus.paidInFull);
