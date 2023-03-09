@@ -1,17 +1,14 @@
 package com.menuit.menuitreplica.repository;
 
 import com.menuit.menuitreplica.domain.*;
-import com.menuit.menuitreplica.exception.DuplicationOfOrderException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 @Repository
 @RequiredArgsConstructor
@@ -50,6 +47,13 @@ public class OrderRepository {
     public void deleteOrderItemFromOrder(Long orderItemId){
         OrderItem orderItem = findOneOrderItem(orderItemId);
         orderItem.getOrder().getOrderItems().remove(orderItem);
+
+        //set the payment again to update orderItems list in payment/payer
+        if(orderItem.getOrder().getPayment().isGratuity()){
+            Payment.createPayment(orderItem.getOrder(),100);
+        } else{
+            Payment.createPayment(orderItem.getOrder(),1);
+        }
     }
 
 
@@ -73,17 +77,32 @@ public class OrderRepository {
                 .getResultList();
     }
 
-    public List<Order> findByItem(Item item){
-        List<OrderItem> orderItemList = em.createQuery("select oi from OrderItem oi where oi.item = :item", OrderItem.class)
-                .setParameter("item", item)
+    public List<Order> findByItem(Long itemId){
+//        List<OrderItem> orderItemList = em.createQuery("select oi from OrderItem oi where oi.item = :item", OrderItem.class)
+//                .setParameter("item", item)
+//                .getResultList();
+//        List<Order> orderList = new ArrayList<>();
+//        for(OrderItem orderItem: orderItemList){
+//            if(!orderList.contains(orderItem.getOrder())){
+//                orderList.add(orderItem.getOrder());
+//            }
+//        }
+        List<Order> orderList = em.createQuery("SELECT DISTINCT o FROM Order o JOIN o.orderItems oi JOIN oi.item i WHERE i.id = :itemId", Order.class)
+                .setParameter("itemId", itemId)
                 .getResultList();
-        List<Order> orderList = new ArrayList<>();
-        for(OrderItem orderItem: orderItemList){
-            if(!orderList.contains(orderItem.getOrder())){
-                orderList.add(orderItem.getOrder());
+        System.out.println("find orders that contain orderItems with an item that matches with given itemId: "+ itemId);
+        for(Order order: orderList){
+            System.out.println("Order Id: "+ order.getId());
+            for(Payer payer: order.getPayment().getPayers()){
+                for(OrderItem orderItem: payer.getOrderItems()){
+                    System.out.println("Item Id: "+ orderItem.getItem().getId());
+                }
             }
         }
+        System.out.println("size of result list: " + orderList.size());
         return orderList;
+
+//        return orderList;
 //        return em.createQuery("select o from Order o JOIN FETCH o.orderItems where o.orderItems")
     }
 
@@ -111,6 +130,7 @@ public class OrderRepository {
     }
 
     public List<Order> findByTotalTipAmount(double startAmount, double endAmount){
+        //between keyword includes both ends
         return em.createQuery("select o from Order o where o.payment.totalTipAmount between :startAmount and :endAmount", Order.class)
                 .setParameter("startAmount", startAmount)
                 .setParameter("endAmount", endAmount)
