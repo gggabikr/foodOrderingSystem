@@ -54,7 +54,7 @@ public class OrderRepositoryTest {
 
 
     @Test
-    public void findByUser() throws Exception {
+    public void multiTest() throws Exception {
         //given
         User tableUser = new User();
         tableUser.setEmail("gggabikr1@gmail.com");
