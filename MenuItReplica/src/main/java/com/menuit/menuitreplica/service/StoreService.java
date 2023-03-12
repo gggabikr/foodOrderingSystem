@@ -64,20 +64,16 @@ public class StoreService {
         return storeRepository.findByStatus(status);
     }
 
-    public List<Store> findByStoreTagId(Long tagId){
-        List<StoreTag> storeTagsByTagId = tagRepository.findStoreTagsByTagId(tagId);
-        List<Store> stores = new ArrayList<>();
-        for(StoreTag storeTag: storeTagsByTagId){
-            stores.add(storeTag.getStore());
-        }
-        return stores;
+    public List<Store> findStoreByTagId(Long tagId){
+        Tag tag = tagRepository.findOne(tagId);
+        return storeRepository.findByTag(tag);
     }
 
     public List<Store> findByStoreTagName(String tagName){
         List<Tag> tagsWithGivenName = tagRepository.findByExactName(tagName);
         List<Store> result = new ArrayList<>();
         for(Tag tag: tagsWithGivenName){
-            List<Store> stores = findByStoreTagId(tag.getId());
+            List<Store> stores = findStoreByTagId(tag.getId());
             result.addAll(stores);
         }
         return result;
@@ -101,7 +97,7 @@ public class StoreService {
         Store store = findOne(storeId);
         return storeRepository.findCategoriesByStore(store);
     }
-
+    @Transactional
     public Long addNewCategory(Long storeId, String name){
         Store store = findOne(storeId);
         return storeRepository.addNewCategory(store, name);
@@ -109,8 +105,36 @@ public class StoreService {
 
     @Transactional
     public void deleteCategory(Long storeId, Long categoryId) throws IllegalAccessException {
-        Store store = findOne(storeId);
+        Store store = storeRepository.findOne(storeId);
         Category category = findOneCategory(categoryId);
         storeRepository.deleteCategory(store,category);
+    }
+
+    //==STORE TAG SERVICE==//
+    public List<StoreTag> findOneStoreTagByStoreAndTag(Long storeId, Long tagId){
+        Store store = findOne(storeId);
+        Tag tag = tagRepository.findOne(tagId);
+        return storeRepository.findOneStoreTagByStoreAndTag(store, tag);
+    }
+
+
+    public List<StoreTag> findAllStoreTags(){
+        return storeRepository.findAllStoreTags();
+    }
+
+    public List<StoreTag> findStoreTagsByStore(Long storeId){
+        Store store = storeRepository.findOne(storeId);
+        return storeRepository.findStoreTagsByStore(store);
+    }
+
+    public List<StoreTag> findStoreTagsByTag(Long tagId){
+        Tag tag = tagRepository.findOne(tagId);
+        return storeRepository.findStoreTagsByTag(tag);
+    }
+
+    public void deleteStoreTagByStoreAndTag(Long storeId, Long tagId){
+        Store store = storeRepository.findOne(storeId);
+        Tag tag = tagRepository.findOne(tagId);
+        storeRepository.deleteStoreTagByStoreAndTag(store,tag);
     }
 }
