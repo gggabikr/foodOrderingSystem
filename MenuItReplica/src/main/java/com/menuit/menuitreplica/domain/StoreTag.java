@@ -19,4 +19,12 @@ public class StoreTag {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
     private Store store;
+
+//    public static StoreTag createStoreTag(Tag tag, Store store){
+//        StoreTag storeTag = new StoreTag();
+//        storeTag.setTag(tag);
+//        storeTag.setStore(store);
+//
+//    }
+    //TODO: how do I set the tag for store? repository? service? or just a method?
 }
