@@ -28,6 +28,8 @@ public class StoreRepositoryTest {
     StoreRepository storeRepository;
     @Autowired
     RatingRepository ratingRepository;
+    @Autowired
+    TagRepository tagRepository;
 
     @PersistenceContext
     EntityManager em;
@@ -298,4 +300,103 @@ public class StoreRepositoryTest {
 //        //then
 //        Assertions.fail("This shouldn't be run.");
 //    }
+
+    @Test
+    public void storeTagTests() throws Exception{
+        //given
+        User user1 = new User();
+        user1.setEmail("gggabikr@gmail.com");
+        user1.setFullName("Jason Lee");
+        user1.setPassword("aabbccde");
+        user1.setPhone("7788097503");
+        user1.setRole(UserRole.ROLE_OWNER);
+
+        User user2 = new User();
+        user2.setEmail("gggab@gmail.com");
+        user2.setFullName("Jacob Lee");
+        user2.setPassword("abcdef");
+        user2.setPhone("7787503982");
+        user2.setRole(UserRole.ROLE_GENERAL);
+
+        Address address = new Address("B.C", "Vancouver", "1990 41st Ave", "#303", "V6M 1Y4");
+
+        Store store1 = new Store();
+        store1.setOwner(user1);
+        store1.setAddress(address);
+        store1.setPhone("7788021324");
+        store1.setStoreDescription("aaaaaa");
+        store1.setName("Jason's donuts");
+        store1.setStatus(true);
+
+        Store store2 = new Store();
+        store2.setOwner(user1);
+        store2.setAddress(address);
+        store2.setPhone("6041234567");
+        store2.setStoreDescription("aaaaaabb");
+        store2.setName("Jason's kitchen");
+        store2.setStatus(false);
+
+        Store store3 = new Store();
+        store3.setOwner(user1);
+        store3.setAddress(address);
+        store3.setPhone("6041232222");
+        store3.setStoreDescription("aaaaaabbc");
+        store3.setName("Jason's Garden");
+        store3.setStatus(true);
+
+        //when
+        userRepository.save(user1);
+        storeRepository.register(store1);
+        storeRepository.register(store2);
+        storeRepository.register(store3);
+
+
+        Tag tag1 = new Tag();
+        tag1.setName("Chinese");
+
+        Tag tag2 = new Tag();
+        tag1.setName("Korean");
+
+        tagRepository.create(tag1);
+        tagRepository.create(tag2);
+
+        store1.addStoreTag(tag1);
+        store1.addStoreTag(tag2);
+        store2.addStoreTag(tag1);
+        store3.addStoreTag(tag2);
+
+        List<StoreTag> storeTagsByStore1 = storeRepository.findStoreTagsByStore(store1);
+        List<StoreTag> storeTagsByStore2 = storeRepository.findStoreTagsByStore(store2);
+        List<StoreTag> storeTagsByStore3 = storeRepository.findStoreTagsByStore(store3);
+
+        List<Store> storesByTag1 = storeRepository.findByTag(tag1);
+        List<Store> storesByTag2 = storeRepository.findByTag(tag2);
+
+        //then
+        Assertions.assertEquals(2, storeTagsByStore1.size());
+        Assertions.assertEquals(1, storeTagsByStore2.size());
+        Assertions.assertEquals(1, storeTagsByStore3.size());
+
+        for(StoreTag storeTag: storeTagsByStore1){
+            Assertions.assertEquals(storeTag.getStore(), store1);
+        }
+        for(StoreTag storeTag: storeTagsByStore2){
+            Assertions.assertEquals(storeTag.getStore(), store2);
+        }
+        for(StoreTag storeTag: storeTagsByStore3){
+            Assertions.assertEquals(storeTag.getStore(), store3);
+        }
+        Assertions.assertEquals(2, storesByTag1.size());
+        Assertions.assertEquals(2, storesByTag2.size());
+        Assertions.assertTrue(storesByTag1.contains(store1));
+        Assertions.assertTrue(storesByTag1.contains(store2));
+        Assertions.assertTrue(storesByTag2.contains(store1));
+        Assertions.assertTrue(storesByTag2.contains(store3));
+        Assertions.assertEquals(4, storeRepository.findAllStoreTags().size());
+
+        storeRepository.deleteStoreTagByStoreAndTag(store1, tag1);
+        Assertions.assertEquals(1, storeRepository.findStoreTagsByStore(store1).size());
+        Assertions.assertEquals(1, store1.getTags().size());
+        Assertions.assertEquals(store1.getTags().get(0).getTag(), tag2);
+    }
 }
