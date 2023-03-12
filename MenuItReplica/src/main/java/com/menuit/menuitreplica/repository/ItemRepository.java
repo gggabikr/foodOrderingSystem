@@ -48,45 +48,65 @@ public class ItemRepository {
     }
 
     public List<Item> findByStore(Store store){
-        return em.createQuery("select i from Item i where i.store = :store", Item.class)
+        return em.createQuery("select i from Item i where i.store = :store and i.deleted = false", Item.class)
+                .setParameter("store", store)
+                .getResultList();
+    }
+
+    public List<Item> findByStoreDeleted(Store store){
+        return em.createQuery("select i from Item i where i.store = :store and i.deleted = true", Item.class)
                 .setParameter("store", store)
                 .getResultList();
     }
 
     public List<Item> findByStoreAndCategory(Store store, Category category){
-        return em.createQuery("select i from Item i where i.store = :store and i.category = :category", Item.class)
+        return em.createQuery("select i from Item i where i.store = :store and i.category = :category and i.deleted = false", Item.class)
+                .setParameter("store", store)
+                .setParameter("category", category)
+                .getResultList();
+    }
+
+    public List<Item> findByStoreAndCategoryDeleted(Store store, Category category){
+        return em.createQuery("select i from Item i where i.store = :store and i.category = :category and i.deleted = true", Item.class)
                 .setParameter("store", store)
                 .setParameter("category", category)
                 .getResultList();
     }
 
     public List<Item> findByItemType(ItemType itemType){
-        return em.createQuery("select i from Item i where i.itemType = :type", Item.class)
+        return em.createQuery("select i from Item i where i.itemType = :type and i.deleted = false", Item.class)
                 .setParameter("type", itemType)
                 .getResultList();
     }
 
     public List<Item> findByStoreAndItemType(Store store, ItemType itemType){
-        return em.createQuery("select i from Item i where i.store = :store and i.itemType = :type", Item.class)
+        return em.createQuery("select i from Item i where i.store = :store and i.itemType = :type and i.deleted = false", Item.class)
+                .setParameter("store", store)
+                .setParameter("type", itemType)
+                .getResultList();
+    }
+
+    public List<Item> findByStoreAndItemTypeDeleted(Store store, ItemType itemType){
+        return em.createQuery("select i from Item i where i.store = :store and i.itemType = :type and i.deleted = true", Item.class)
                 .setParameter("store", store)
                 .setParameter("type", itemType)
                 .getResultList();
     }
 
     public List<Item> findByItemTag(ItemTag itemTag){
-        return em.createQuery("select i from Item i where i.itemTag = :tag", Item.class)
+        return em.createQuery("select i from Item i where i.itemTag = :tag and i.deleted = false", Item.class)
                 .setParameter("tag", itemTag)
                 .getResultList();
     }
 
     public List<Item> findByStatus(Boolean status){
-        return em.createQuery("select i from Item i where i.status = :status", Item.class)
+        return em.createQuery("select i from Item i where i.status = :status and i.deleted = false", Item.class)
                 .setParameter("status", status)
                 .getResultList();
     }
 
     public List<Item> findDiscountedItemOnStore(Store store){
-        return em.createQuery("select i from Item i where i.store = :store and NOT (i.discountAmount is NULL and i.discountPercent is NULL)", Item.class)
+        return em.createQuery("select i from Item i where i.store = :store and NOT (i.discountAmount is NULL and i.discountPercent is NULL) and i.deleted = false", Item.class)
                 .setParameter("store", store)
                 .getResultList();
 //        List<Item> resultList1 = em.createQuery("SELECT i FROM Item i WHERE i.store = :store AND i.discountAmount IS NOT NULL", Item.class)
