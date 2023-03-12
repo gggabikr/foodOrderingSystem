@@ -14,6 +14,7 @@ import java.util.List;
 public class TagRepository {
 
     private final EntityManager em;
+    private final StoreRepository storeRepository;
 
     public Long create(Tag tag) throws Exception {
         if(tag.getId() != null){
@@ -47,32 +48,9 @@ public class TagRepository {
                 .getResultList();
     }
 
-    public List<StoreTag> findStoreTagsByTag(Tag tag){
-        return em.createQuery("select st from StoreTag st where st.tag = :tag", StoreTag.class)
-                .setParameter("tag", tag)
-                .getResultList();
-    }
-
-    //because I will not make TagService, I will put two methods for it
-    public List<StoreTag> findStoreTagsByTagId(Long tagId){
-        return em.createQuery("select st from StoreTag st where st.tag.id = :tagId", StoreTag.class)
-                .setParameter("tagId", tagId)
-                .getResultList();
-    }
-
     public void deleteTag(Tag tag){
-        List<StoreTag> storeTagsByTag = findStoreTagsByTag(tag);
+        List<StoreTag> storeTagsByTag = storeRepository.findStoreTagsByTag(tag);
         em.remove(storeTagsByTag.stream());
         em.remove(tag);
     }
-
-    //because I will not make TagService, I will put two methods for it
-    public void deleteTag(Long tagId){
-        Tag tag = findOne(tagId);
-        List<StoreTag> storeTagsByTag = findStoreTagsByTagId(tagId);
-        em.remove(storeTagsByTag.stream());
-        em.remove(tag);
-    }
-
-
 }
