@@ -133,6 +133,6 @@ public class Item {
     }
 
     public void deleteItem(){
-        this.deleted = false;
+        this.deleted = true;
     }
 }
