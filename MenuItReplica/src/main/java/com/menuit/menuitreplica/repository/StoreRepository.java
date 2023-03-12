@@ -66,17 +66,11 @@ public class StoreRepository {
                 .getResultList();
     }
 
-//    public List<Store> findByStoreTag(String tagName){
-//        List<StoreTag> tag1 = em.createQuery("select ST from StoreTag ST where ST.tag.name =:tagName", StoreTag.class)
-//                .setParameter("tagName", tagName)
-//                .getResultList();
-//
-//        List<Store> stores = new ArrayList<>();
-//        for (StoreTag st: tag1) {
-//            stores.add(st.getStore());
-//        }
-//        return stores;
-//    }
+    public List<Store> findByTag(Tag tag){
+        return em.createQuery("select distinct s from Store s join s.tags st join st.tag t where t = :tag", Store.class)
+                .setParameter("tag", tag)
+                .getResultList();
+    }
 
     public List<Store> findByRatingScore(double score){
         return em.createQuery("select s from Store s where s.ratingScore >= :score", Store.class)
@@ -117,6 +111,43 @@ public class StoreRepository {
                 store.deleteCategory(category);
                 em.remove(category);
             }
+        }
+    }
+
+    //==STORE TAG REPOSITORY==//
+    public List<StoreTag> findOneStoreTagByStoreAndTag(Store store, Tag tag){
+        return em.createQuery("select st from StoreTag st where st.store = :store and st.tag = :tag", StoreTag.class)
+                .setParameter("store", store)
+                .setParameter("tag", tag)
+                .getResultList();
+    }
+
+    public List<StoreTag> findAllStoreTags(){
+        return em.createQuery("select st from StoreTag st", StoreTag.class).getResultList();
+    }
+
+    public List<StoreTag> findStoreTagsByStore(Store store){
+        return em.createQuery("select st from StoreTag st where st.store = :store", StoreTag.class)
+                .setParameter("store", store)
+                .getResultList();
+    }
+
+    public List<StoreTag> findStoreTagsByTag(Tag tag){
+        return em.createQuery("select st from StoreTag st where st.tag = :tag", StoreTag.class)
+                .setParameter("tag", tag)
+                .getResultList();
+    }
+
+//    public void deleteStoreTag(StoreTag storeTag){
+//        storeTag.getStore().deleteStoreTag(storeTag);
+//        em.remove(storeTag);
+//    }
+
+    public void deleteStoreTagByStoreAndTag(Store store, Tag tag){
+        List<StoreTag> storeTags = findOneStoreTagByStoreAndTag(store, tag);
+        for(StoreTag storeTag: storeTags){
+            storeTag.getStore().deleteStoreTag(storeTag);
+            em.remove(storeTag);
         }
     }
 }
