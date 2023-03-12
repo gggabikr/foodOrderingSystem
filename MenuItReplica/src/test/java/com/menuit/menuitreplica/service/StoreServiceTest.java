@@ -149,19 +149,16 @@ public class StoreServiceTest {
         tag1.setName("Chinese");
         tagRepository.create(tag1);
 
-        StoreTag storeTag1 = new StoreTag();
-        storeTag1.setTag(tag1);
-        store1.addStoreTag(storeTag1);
 
-        StoreTag storeTag2 = new StoreTag();
-        storeTag2.setTag(tag1);
-        store3.addStoreTag(storeTag2);
+        store1.addStoreTag(tag1);
+
+        store3.addStoreTag(tag1);
 
 
         //then
-        Assertions.assertEquals(2, storeService.findByStoreTagId(tag1.getId()).size());
-        Assertions.assertEquals(store1, storeService.findByStoreTagId(tag1.getId()).get(0));
-        Assertions.assertEquals(store3, storeService.findByStoreTagId(tag1.getId()).get(1));
+        Assertions.assertEquals(2, storeService.findStoreByTagId(tag1.getId()).size());
+        Assertions.assertEquals(store1, storeService.findStoreByTagId(tag1.getId()).get(0));
+        Assertions.assertEquals(store3, storeService.findStoreByTagId(tag1.getId()).get(1));
         Assertions.assertEquals(2, storeService.findByStoreTagName("Chinese").size());
         Assertions.assertEquals(store1, storeService.findByStoreTagName("Chinese").get(0));
         Assertions.assertEquals(store3, storeService.findByStoreTagName("Chinese").get(1));
