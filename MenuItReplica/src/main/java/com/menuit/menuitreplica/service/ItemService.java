@@ -31,10 +31,7 @@ public class ItemService {
 
 
     public void removeItem(Long storeId, Long itemId) throws IllegalAccessException {
-        //TODO: 삭제후 기존 오더에서 아이템 확인할때 문제가 되는지 확인. 문제가 될경우 아래처럼 변경.
         //it wouldn't actually delete the item cuz it will mess up all the order records ordered the item.
-        //but it will have alive value to define if the item is deleted or not.
-        // =>will need many more repository/service methods as well
         Store store = storeRepository.findOne(storeId);
         Item item = itemRepository.findOne(itemId);
 
@@ -54,11 +51,22 @@ public class ItemService {
         return itemRepository.findByStore(store);
     }
 
+    public List<Item> findByStoreDeleted(Long storeId) {
+        Store store = storeRepository.findOne(storeId);
+        return itemRepository.findByStoreDeleted(store);
+    }
+
     public List<Item> findByStoreAndCategory(Long storeId, Long categoryId){
-        //findByCategory 대신에 그냥 스토어도 참고하게 만들었다.
+        //findByCategory 만 해도 되지만 그냥 스토어도 참고하게 만들었다.
         Store store = storeRepository.findOne(storeId);
         Category category = storeRepository.findOneCategory(categoryId);
         return itemRepository.findByStoreAndCategory(store, category);
+    }
+
+    public List<Item> findByStoreAndCategoryDeleted(Long storeId, Long categoryId) {
+        Store store = storeRepository.findOne(storeId);
+        Category category = storeRepository.findOneCategory(categoryId);
+        return itemRepository.findByStoreAndCategoryDeleted(store,category);
     }
 
     public List<Item> findByItemType(String str){
@@ -71,6 +79,12 @@ public class ItemService {
         ItemType itemType = ItemType.valueOf(strType);
 
         return itemRepository.findByStoreAndItemType(store,itemType);
+    }
+
+    public List<Item> findByStoreAndItemTypeDeleted(Long storeId, String strType){
+        Store store = storeRepository.findOne(storeId);
+        ItemType itemType = ItemType.valueOf(strType);
+        return itemRepository.findByStoreAndItemTypeDeleted(store, itemType);
     }
 
     public List<Item> findByItemTag(String str){
