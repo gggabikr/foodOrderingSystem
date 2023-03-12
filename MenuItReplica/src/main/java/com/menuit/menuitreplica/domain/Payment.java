@@ -72,6 +72,10 @@ public class Payment {
         payer.setAdditionalDiscount(additionalDiscountAmount);
         payer.setDiscountReason(discountReason);
 
+        if(payment.isGratuity){
+            payer.setTipAmount(false, payment.getGratuityPercent());
+        }
+
         payment.getPayers().add(payer);
 
         order.setPayment(payment);
@@ -96,6 +100,9 @@ public class Payment {
             payer.setOrderItems(dividedOrderItems);
             payer.setAdditionalDiscount(Math.round((getAdditionalDiscountAmount()/numOfCustomers*100)/100.0));
             payer.setDiscountReason(comment);
+            if(this.isGratuity){
+                payer.setTipAmount(false, this.getGratuityPercent());
+            }
         }
     }
 
@@ -104,6 +111,9 @@ public class Payment {
         payer.setName("Customer");
         payer.setPayment(this);
         payer.setPaid(false);
+        if(this.isGratuity){
+            payer.setTipAmount(false, this.getGratuityPercent());
+        }
         payers.add(payer);
         return payer;
     }
