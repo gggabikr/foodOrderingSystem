@@ -109,9 +109,24 @@ public class Store {
         item.getCategory().getItems().remove(item);
     }
 
-    public void addStoreTag(StoreTag storeTag){
-        this.tags.add(storeTag);
+    public void addStoreTag(Tag tag){
+        StoreTag storeTag = new StoreTag();
+        storeTag.setTag(tag);
         storeTag.setStore(this);
+        boolean flag = false;
+        for(StoreTag storeTag1: this.tags){
+            if (storeTag1.getTag() == tag) {
+                flag = true;
+                break;
+            }
+        }
+        if(!flag){
+            this.tags.add(storeTag);
+        }
+    }
+
+    public void deleteStoreTag(StoreTag storeTag){
+        this.tags.remove(storeTag);
     }
 
 
