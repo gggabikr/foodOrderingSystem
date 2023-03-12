@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Getter @Setter
 public class FavStore {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="favstore_id")
     private Long id;
 

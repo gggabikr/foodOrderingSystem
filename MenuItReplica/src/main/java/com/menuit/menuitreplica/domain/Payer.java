@@ -13,7 +13,7 @@ import java.util.List;
 @Getter @Setter
 public class Payer {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "payer_id")
     private Long id;
 

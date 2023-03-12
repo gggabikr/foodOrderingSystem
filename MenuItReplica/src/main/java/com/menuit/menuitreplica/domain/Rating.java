@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Getter @Setter
 public class Rating {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="rating_id")
     private Long id;
 
