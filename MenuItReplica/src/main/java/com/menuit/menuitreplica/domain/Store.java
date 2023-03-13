@@ -4,8 +4,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter @Setter
@@ -34,11 +39,8 @@ public class Store {
 
     private double ratingScore = 0;
 
-    @OneToMany(mappedBy = "store")
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
     private List<Hours> openHours = new ArrayList<>();
-
-    @OneToMany(mappedBy = "store")
-    private List<Hours> orderAvailableHours = new ArrayList<>();
 
     private String storeDescription;
 
@@ -74,10 +76,15 @@ public class Store {
         hour.setStore(this);
     }
 
-    public void setAvailableHours(Hours hour){
-        this.getOrderAvailableHours().removeIf(hours -> hours.getDayOfWeek() == hour.getDayOfWeek());
-        this.orderAvailableHours.add(hour);
-        hour.setStore(this);
+    public Hours getHoursForGivenDay(DayOfWeek dayOfWeek){
+        Hours result = null;
+        for (Hours hours : this.getOpenHours()) {
+            if (hours.getDayOfWeek() == dayOfWeek) {
+                result = hours;
+                break;
+            }
+        }
+        return result;
     }
 
 //    public void addNewCategory(Category category){
@@ -189,5 +196,15 @@ public class Store {
 
         // Return the constructed string
         return sb.toString();
+    }
+
+    public void printOpenHours(){
+        // Sort the list by dayOfWeek
+        openHours.sort(Comparator.comparing(Hours::getDayOfWeek));
+
+        // Iterate over the sorted list and print the opening hours for each day
+        for (Hours hours : openHours) {
+            System.out.println(hours.getDayOfWeek() + ": " + hours.getOpeningTime() + " ~ " + hours.getClosingTime() + " (Last Call: " + hours.getLastCallTime() + ")");
+        }
     }
 }
