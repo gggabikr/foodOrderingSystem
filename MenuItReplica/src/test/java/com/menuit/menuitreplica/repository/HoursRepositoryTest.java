@@ -126,6 +126,38 @@ public class HoursRepositoryTest {
         Assertions.assertEquals(localTime2000, store1.getHoursForGivenDay(DayOfWeek.valueOf("SUNDAY")).getClosingTime());
 
         store1.printOpenHours();
+
+        Hours hour1 = new Hours(DayOfWeek.MONDAY, LocalTime.of(7, 0), LocalTime.of(15, 0), LocalTime.of(14, 30));
+        Hours hour2 = new Hours(DayOfWeek.TUESDAY, LocalTime.of(9, 30), LocalTime.of(18, 0), LocalTime.of(17, 30));
+        Hours hour3 = new Hours(DayOfWeek.WEDNESDAY, LocalTime.of(11, 0), LocalTime.of(22, 0), LocalTime.of(21, 0));
+        Hours hour4 = new Hours(DayOfWeek.THURSDAY, LocalTime.of(14, 0), LocalTime.of(23, 30), LocalTime.of(23, 0));
+        Hours hour5 = new Hours(DayOfWeek.FRIDAY, LocalTime.of(16, 30), LocalTime.of(1, 0), LocalTime.of(0, 30));
+        Hours hour6 = new Hours(DayOfWeek.SATURDAY, LocalTime.of(18, 0), LocalTime.of(3, 0), LocalTime.of(2, 0));
+        Hours hour7 = new Hours(DayOfWeek.SUNDAY, LocalTime.of(20, 0), LocalTime.of(5, 0), LocalTime.of(4, 0));
+        Hours hour8 = new Hours(DayOfWeek.MONDAY, LocalTime.of(0, 0), LocalTime.of(12, 0), LocalTime.of(11, 30));
+        Hours hour9 = new Hours(DayOfWeek.TUESDAY, LocalTime.of(12, 0), LocalTime.of(23, 59, 59), LocalTime.of(23, 30));
+        Hours hour10 = new Hours(DayOfWeek.WEDNESDAY, LocalTime.of(22, 0), LocalTime.of(2, 0), LocalTime.of(1, 0));
+        Hours hour11 = new Hours(DayOfWeek.THURSDAY, LocalTime.of(3, 0), LocalTime.of(9, 0), LocalTime.of(8, 30));
+        Hours hour12 = new Hours(DayOfWeek.FRIDAY, LocalTime.of(5, 30), LocalTime.of(14, 0), LocalTime.of(13, 30));
+        Hours hour13 = new Hours(DayOfWeek.SATURDAY, LocalTime.of(10, 0), LocalTime.of(18, 30), LocalTime.of(18, 0));
+        Hours hour14 = new Hours(DayOfWeek.SUNDAY, LocalTime.of(19, 0), LocalTime.of(3, 30), LocalTime.of(3, 0));
+        Hours hour15 = new Hours(DayOfWeek.MONDAY, LocalTime.of(23, 0), LocalTime.of(4, 0), LocalTime.of(3, 0));
+        Hours hour16 = new Hours(DayOfWeek.TUESDAY, LocalTime.of(5, 0), LocalTime.of(10, 0), LocalTime.of(9, 30));
+        Hours hour17 = new Hours(DayOfWeek.WEDNESDAY, LocalTime.of(12, 0), LocalTime.of(20, 0), LocalTime.of(19, 0));
+        Hours hour18 = new Hours(DayOfWeek.THURSDAY, LocalTime.of(17, 30), LocalTime.of(23, 0), LocalTime.of(22, 30));
+        Hours hour19 = new Hours(DayOfWeek.FRIDAY, LocalTime.of(19, 0), LocalTime.of(2, 0),LocalTime.of(0, 0));
+        Hours hour20 = new Hours(DayOfWeek.FRIDAY, LocalTime.of(0, 0), LocalTime.of(3, 0),LocalTime.of(1, 0));
+        Hours hour21 = new Hours(DayOfWeek.FRIDAY, LocalTime.of(23, 0), LocalTime.of(2, 0),LocalTime.of(0, 0));
+        Hours hour22 = new Hours(DayOfWeek.FRIDAY, LocalTime.of(17, 0), LocalTime.of(23, 0),LocalTime.of(0, 0));
+
+        Hours hour23 = new Hours(DayOfWeek.MONDAY, LocalTime.of(12, 0), LocalTime.of(11, 0), LocalTime.of(10, 0));
+        Hours hour24 = new Hours(DayOfWeek.TUESDAY, LocalTime.of(10, 0), LocalTime.of(9, 0), LocalTime.of(11, 0));
+        Hours hour25 = new Hours(DayOfWeek.WEDNESDAY, LocalTime.of(0, 0), LocalTime.of(0, 0), LocalTime.of(0, 0));
+        Hours hour26 = new Hours(DayOfWeek.THURSDAY, LocalTime.of(22, 0), LocalTime.of(8, 0), LocalTime.of(23, 0));
+//        Hours hour27 = new Hours(DayOfWeek.FRIDAY, LocalTime.of(23, 0), LocalTime.of(1, 0), LocalTime.of(22, 0));
+
+
+
     }
 
     @Test
