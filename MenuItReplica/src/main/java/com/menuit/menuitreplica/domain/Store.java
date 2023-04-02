@@ -7,10 +7,8 @@ import javax.persistence.*;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Getter @Setter
@@ -198,13 +196,28 @@ public class Store {
         return sb.toString();
     }
 
-    public void printOpenHours(){
+
+    public String printOpenHours(){
         // Sort the list by dayOfWeek
         openHours.sort(Comparator.comparing(Hours::getDayOfWeek));
 
-        // Iterate over the sorted list and print the opening hours for each day
+        // Create a StringBuilder object
+        StringBuilder sb = new StringBuilder();
+
+        // Iterate over the sorted list and append the opening hours for each day to the StringBuilder
         for (Hours hours : openHours) {
-            System.out.println(hours.getDayOfWeek() + ": " + hours.getOpeningTime() + " ~ " + hours.getClosingTime() + " (Last Call: " + hours.getLastCallTime() + ")");
+            sb.append(hours.getDayOfWeek())
+                    .append(": ")
+                    .append(hours.getOpeningTime())
+                    .append(" ~ ")
+                    .append(hours.getClosingTime())
+                    .append(" (Last Call: ")
+                    .append(hours.getLastCallTime())
+                    .append(")\n");
         }
+
+        // Return the final string
+        System.out.println(sb);
+        return sb.toString();
     }
 }
