@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -32,7 +33,7 @@ public class HoursRepositoryTest {
 
 
     @Test
-    public void findOne() throws Exception {
+    public void multiTest() throws Exception {
 
         //given
         User ownerUser1 = new User();
@@ -127,60 +128,101 @@ public class HoursRepositoryTest {
 
         store1.printOpenHours();
 
-        Hours hour1 = new Hours(DayOfWeek.MONDAY, LocalTime.of(7, 0), LocalTime.of(15, 0), LocalTime.of(14, 30));
-        Hours hour2 = new Hours(DayOfWeek.TUESDAY, LocalTime.of(9, 30), LocalTime.of(18, 0), LocalTime.of(17, 30));
-        Hours hour3 = new Hours(DayOfWeek.WEDNESDAY, LocalTime.of(11, 0), LocalTime.of(22, 0), LocalTime.of(21, 0));
-        Hours hour4 = new Hours(DayOfWeek.THURSDAY, LocalTime.of(14, 0), LocalTime.of(23, 30), LocalTime.of(23, 0));
-        Hours hour5 = new Hours(DayOfWeek.FRIDAY, LocalTime.of(16, 30), LocalTime.of(1, 0), LocalTime.of(0, 30));
-        Hours hour6 = new Hours(DayOfWeek.SATURDAY, LocalTime.of(18, 0), LocalTime.of(3, 0), LocalTime.of(2, 0));
-        Hours hour7 = new Hours(DayOfWeek.SUNDAY, LocalTime.of(20, 0), LocalTime.of(5, 0), LocalTime.of(4, 0));
-        Hours hour8 = new Hours(DayOfWeek.MONDAY, LocalTime.of(0, 0), LocalTime.of(12, 0), LocalTime.of(11, 30));
-        Hours hour9 = new Hours(DayOfWeek.TUESDAY, LocalTime.of(12, 0), LocalTime.of(23, 59, 59), LocalTime.of(23, 30));
-        Hours hour10 = new Hours(DayOfWeek.WEDNESDAY, LocalTime.of(22, 0), LocalTime.of(2, 0), LocalTime.of(1, 0));
-        Hours hour11 = new Hours(DayOfWeek.THURSDAY, LocalTime.of(3, 0), LocalTime.of(9, 0), LocalTime.of(8, 30));
-        Hours hour12 = new Hours(DayOfWeek.FRIDAY, LocalTime.of(5, 30), LocalTime.of(14, 0), LocalTime.of(13, 30));
-        Hours hour13 = new Hours(DayOfWeek.SATURDAY, LocalTime.of(10, 0), LocalTime.of(18, 30), LocalTime.of(18, 0));
-        Hours hour14 = new Hours(DayOfWeek.SUNDAY, LocalTime.of(19, 0), LocalTime.of(3, 30), LocalTime.of(3, 0));
-        Hours hour15 = new Hours(DayOfWeek.MONDAY, LocalTime.of(23, 0), LocalTime.of(4, 0), LocalTime.of(3, 0));
-        Hours hour16 = new Hours(DayOfWeek.TUESDAY, LocalTime.of(5, 0), LocalTime.of(10, 0), LocalTime.of(9, 30));
-        Hours hour17 = new Hours(DayOfWeek.WEDNESDAY, LocalTime.of(12, 0), LocalTime.of(20, 0), LocalTime.of(19, 0));
-        Hours hour18 = new Hours(DayOfWeek.THURSDAY, LocalTime.of(17, 30), LocalTime.of(23, 0), LocalTime.of(22, 30));
-        Hours hour19 = new Hours(DayOfWeek.FRIDAY, LocalTime.of(19, 0), LocalTime.of(2, 0),LocalTime.of(0, 0));
-        Hours hour20 = new Hours(DayOfWeek.FRIDAY, LocalTime.of(0, 0), LocalTime.of(3, 0),LocalTime.of(1, 0));
-        Hours hour21 = new Hours(DayOfWeek.FRIDAY, LocalTime.of(23, 0), LocalTime.of(2, 0),LocalTime.of(0, 0));
-        Hours hour22 = new Hours(DayOfWeek.FRIDAY, LocalTime.of(17, 0), LocalTime.of(23, 0),LocalTime.of(0, 0));
+        for(Hours hour: hoursRepository.findAll()){
+            System.out.println(hour.getStore().getName());
+            System.out.println(hour.getId());
+            System.out.println(hour.getDayOfWeek().name());
+            System.out.println(hour.getOpeningTime());
+            System.out.println(hour.getClosingTime());
+            System.out.println(hour.getLastCallTime());
+            System.out.println("---------------------");
+        }
+        Assertions.assertEquals(7, hoursRepository.findAll().size());
 
-        Hours hour23 = new Hours(DayOfWeek.MONDAY, LocalTime.of(12, 0), LocalTime.of(11, 0), LocalTime.of(10, 0));
-        Hours hour24 = new Hours(DayOfWeek.TUESDAY, LocalTime.of(10, 0), LocalTime.of(9, 0), LocalTime.of(11, 0));
-        Hours hour25 = new Hours(DayOfWeek.WEDNESDAY, LocalTime.of(0, 0), LocalTime.of(0, 0), LocalTime.of(0, 0));
-        Hours hour26 = new Hours(DayOfWeek.THURSDAY, LocalTime.of(22, 0), LocalTime.of(8, 0), LocalTime.of(23, 0));
+
+        LocalTime localTime1800 = LocalTime.of(18,0);
+        LocalTime localTime0300 = LocalTime.of(3,0);
+        LocalTime localTime0230 = LocalTime.of(2,30);
+
+        hoursRepository.setOpenHoursForAllDays(store2, localTime1800, localTime0300, localTime0230);
+        for(Hours hour: store2.getOpenHours()){
+            Assertions.assertEquals(localTime1800, hour.getOpeningTime());
+            Assertions.assertEquals(localTime0300, hour.getClosingTime());
+            Assertions.assertEquals(localTime0230, hour.getLastCallTime());
+        }
+        for(Hours hour: hoursRepository.findByStore(store2)){
+            Assertions.assertEquals(localTime1800, hour.getOpeningTime());
+            Assertions.assertEquals(localTime0300, hour.getClosingTime());
+            Assertions.assertEquals(localTime0230, hour.getLastCallTime());
+        }
+        Assertions.assertEquals(14, hoursRepository.findAll().size());
+
+        Assertions.assertEquals(localTime0930, hoursRepository.findOneByStoreAndDay(store1, DayOfWeek.FRIDAY).get(0).getOpeningTime());
+        Assertions.assertEquals(localTime2400, hoursRepository.findOneByStoreAndDay(store1, DayOfWeek.FRIDAY).get(0).getClosingTime());
+        Assertions.assertEquals(localTime2300, hoursRepository.findOneByStoreAndDay(store1, DayOfWeek.FRIDAY).get(0).getLastCallTime());
+
+        Assertions.assertEquals(localTime1130, hoursRepository.findOneByStoreAndDay(store1, DayOfWeek.SATURDAY).get(0).getOpeningTime());
+        Assertions.assertEquals(localTime2000, hoursRepository.findOneByStoreAndDay(store1, DayOfWeek.SATURDAY).get(0).getClosingTime());
+        Assertions.assertEquals(localTime1900, hoursRepository.findOneByStoreAndDay(store1, DayOfWeek.SATURDAY).get(0).getLastCallTime());
+
+        Long iddd = hoursRepository.createHour(store2, DayOfWeek.MONDAY, localTime1130, localTime2000, localTime1900);
+        Hours hour = hoursRepository.findOne(iddd);
+        hoursRepository.duplicateHourForSelectedDays(hour, DayOfWeek.TUESDAY);
+
+        Assertions.assertEquals(7, store2.getOpenHours().size());
+        Assertions.assertEquals(localTime1130, store2.getHoursForGivenDay(DayOfWeek.MONDAY).getOpeningTime());
+        Assertions.assertEquals(localTime2000, store2.getHoursForGivenDay(DayOfWeek.MONDAY).getClosingTime());
+        Assertions.assertEquals(localTime1900, store2.getHoursForGivenDay(DayOfWeek.MONDAY).getLastCallTime());
+
+        Assertions.assertEquals(localTime1130, store2.getHoursForGivenDay(DayOfWeek.TUESDAY).getOpeningTime());
+        Assertions.assertEquals(localTime2000, store2.getHoursForGivenDay(DayOfWeek.TUESDAY).getClosingTime());
+        Assertions.assertEquals(localTime1900, store2.getHoursForGivenDay(DayOfWeek.TUESDAY).getLastCallTime());
+
+        Assertions.assertEquals(localTime1800, store2.getHoursForGivenDay(DayOfWeek.WEDNESDAY).getOpeningTime());
+        Assertions.assertEquals(localTime0300, store2.getHoursForGivenDay(DayOfWeek.WEDNESDAY).getClosingTime());
+        Assertions.assertEquals(localTime0230, store2.getHoursForGivenDay(DayOfWeek.WEDNESDAY).getLastCallTime());
+
+
+        //Todo: 아래 코드를 실행하고 hoursRepository.findByStore(store2) 를 했을때 7이 아닌 13이 나오는걸로 보아 원래 있던 리스트가 여전히 남는듯 보인다. 해결하자.
+        hoursRepository.duplicateHourForAllDays(hour);
+
+        Assertions.assertEquals(7, store2.getOpenHours().size());
+        for(Hours hours: store2.getOpenHours()){
+            Assertions.assertEquals(localTime1130, hours.getOpeningTime());
+            Assertions.assertEquals(localTime2000, hours.getClosingTime());
+            Assertions.assertEquals(localTime1900, hours.getLastCallTime());
+        }
+
+        //TODO: i 이용한 for loop 만들어서 두 어레이의 각 엘리먼트가 같은지 비교. (store1, 2 둘다.)
+
+        Assertions.assertArrayEquals(store2.getOpenHours().toArray(), hoursRepository.findByStore(store2).toArray());
+//        Hours hour1 = new Hours(DayOfWeek.MONDAY, LocalTime.of(7, 0), LocalTime.of(15, 0), LocalTime.of(14, 30));
+//        Hours hour2 = new Hours(DayOfWeek.TUESDAY, LocalTime.of(9, 30), LocalTime.of(18, 0), LocalTime.of(17, 30));
+//        Hours hour3 = new Hours(DayOfWeek.WEDNESDAY, LocalTime.of(11, 0), LocalTime.of(22, 0), LocalTime.of(21, 0));
+//        Hours hour4 = new Hours(DayOfWeek.THURSDAY, LocalTime.of(14, 0), LocalTime.of(23, 30), LocalTime.of(23, 0));
+//        Hours hour5 = new Hours(DayOfWeek.FRIDAY, LocalTime.of(16, 30), LocalTime.of(1, 0), LocalTime.of(0, 30));
+//        Hours hour6 = new Hours(DayOfWeek.SATURDAY, LocalTime.of(18, 0), LocalTime.of(3, 0), LocalTime.of(2, 0));
+//        Hours hour7 = new Hours(DayOfWeek.SUNDAY, LocalTime.of(20, 0), LocalTime.of(5, 0), LocalTime.of(4, 0));
+//        Hours hour8 = new Hours(DayOfWeek.MONDAY, LocalTime.of(0, 0), LocalTime.of(12, 0), LocalTime.of(11, 30));
+//        Hours hour9 = new Hours(DayOfWeek.TUESDAY, LocalTime.of(12, 0), LocalTime.of(23, 59, 59), LocalTime.of(23, 30));
+//        Hours hour10 = new Hours(DayOfWeek.WEDNESDAY, LocalTime.of(22, 0), LocalTime.of(2, 0), LocalTime.of(1, 0));
+//        Hours hour11 = new Hours(DayOfWeek.THURSDAY, LocalTime.of(3, 0), LocalTime.of(9, 0), LocalTime.of(8, 30));
+//        Hours hour12 = new Hours(DayOfWeek.FRIDAY, LocalTime.of(5, 30), LocalTime.of(14, 0), LocalTime.of(13, 30));
+//        Hours hour13 = new Hours(DayOfWeek.SATURDAY, LocalTime.of(10, 0), LocalTime.of(18, 30), LocalTime.of(18, 0));
+//        Hours hour14 = new Hours(DayOfWeek.SUNDAY, LocalTime.of(19, 0), LocalTime.of(3, 30), LocalTime.of(3, 0));
+//        Hours hour15 = new Hours(DayOfWeek.MONDAY, LocalTime.of(23, 0), LocalTime.of(4, 0), LocalTime.of(3, 0));
+//        Hours hour16 = new Hours(DayOfWeek.TUESDAY, LocalTime.of(5, 0), LocalTime.of(10, 0), LocalTime.of(9, 30));
+//        Hours hour17 = new Hours(DayOfWeek.WEDNESDAY, LocalTime.of(12, 0), LocalTime.of(20, 0), LocalTime.of(19, 0));
+//        Hours hour18 = new Hours(DayOfWeek.THURSDAY, LocalTime.of(17, 30), LocalTime.of(23, 0), LocalTime.of(22, 30));
+//        Hours hour19 = new Hours(DayOfWeek.FRIDAY, LocalTime.of(19, 0), LocalTime.of(2, 0),LocalTime.of(0, 0));
+//        Hours hour20 = new Hours(DayOfWeek.FRIDAY, LocalTime.of(0, 0), LocalTime.of(3, 0),LocalTime.of(1, 0));
+//        Hours hour21 = new Hours(DayOfWeek.FRIDAY, LocalTime.of(23, 0), LocalTime.of(2, 0),LocalTime.of(0, 0));
+//        Hours hour22 = new Hours(DayOfWeek.FRIDAY, LocalTime.of(17, 0), LocalTime.of(23, 0),LocalTime.of(0, 0));
+//        Hours hour23 = new Hours(DayOfWeek.MONDAY, LocalTime.of(12, 0), LocalTime.of(11, 0), LocalTime.of(10, 0));
+//        Hours hour24 = new Hours(DayOfWeek.TUESDAY, LocalTime.of(10, 0), LocalTime.of(9, 0), LocalTime.of(11, 0));
+//        Hours hour25 = new Hours(DayOfWeek.WEDNESDAY, LocalTime.of(0, 0), LocalTime.of(0, 0), LocalTime.of(0, 0));
+//        Hours hour26 = new Hours(DayOfWeek.THURSDAY, LocalTime.of(22, 0), LocalTime.of(8, 0), LocalTime.of(23, 0));
 //        Hours hour27 = new Hours(DayOfWeek.FRIDAY, LocalTime.of(23, 0), LocalTime.of(1, 0), LocalTime.of(22, 0));
 
-
-
-    }
-
-    @Test
-    public void findAll() {
-    }
-
-    @Test
-    public void findOneByStoreAndDay() {
-    }
-
-    @Test
-    public void createHour() {
-    }
-
-    @Test
-    public void duplicateHourForAllDays() {
-    }
-
-    @Test
-    public void duplicateHourForSelectedDays() {
-    }
-
-    @Test
-    public void findByStore() {
     }
 }
