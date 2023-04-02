@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -53,12 +54,33 @@ public class HoursRepository {
         for(Hours hours: hoursList){
             em.persist(hours);
         }
+        deleteAllHoursWithoutStore();
     }
 
     public void duplicateHourForSelectedDays(Hours hour, DayOfWeek... dayOfWeeks){
         List<Hours> hoursList = hour.duplicateHourForSelectedDays(hour, dayOfWeeks);
         for(Hours hours: hoursList){
             em.persist(hours);
+        }
+        deleteAllHoursWithoutStore();
+    }
+
+    public void setOpenHoursForAllDays(Store store ,LocalTime opening, LocalTime closing, LocalTime lastCall){
+        List<Hours> hoursList = new ArrayList<>();
+        for(DayOfWeek day: DayOfWeek.values()){
+            Hours hours = new Hours(day, opening, closing, lastCall);
+            hours.setStore(store);
+            hoursList.add(hours);
+        }
+        for(Hours hour: store.getOpenHours()){
+            hour.setStore(null);
+        }
+        deleteAllHoursWithoutStore();
+
+        store.getOpenHours().clear();
+        store.getOpenHours().addAll(hoursList);
+        for (Hours hour: hoursList){
+            em.persist(hour);
         }
     }
 
@@ -68,4 +90,10 @@ public class HoursRepository {
                 .getResultList();
     }
 
+    public void deleteAllHoursWithoutStore(){
+        List<Hours> resultList = em.createQuery("select h from Hours h where h.store is NULL", Hours.class).getResultList();
+        for (Hours noStoreHour: resultList){
+            em.remove(noStoreHour);
+        }
+    }
 }
