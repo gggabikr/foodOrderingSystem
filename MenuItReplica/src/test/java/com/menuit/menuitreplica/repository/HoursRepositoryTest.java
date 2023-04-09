@@ -183,7 +183,16 @@ public class HoursRepositoryTest {
         Assertions.assertEquals(localTime0230, store2.getHoursForGivenDay(DayOfWeek.WEDNESDAY).getLastCallTime());
 
 
-        //Todo: 아래 코드를 실행하고 hoursRepository.findByStore(store2) 를 했을때 7이 아닌 13이 나오는걸로 보아 원래 있던 리스트가 여전히 남는듯 보인다. 해결하자.
+        System.out.println("---------------");
+        System.out.println(hoursRepository.findByStore(store2).size());
+        for(Hours hours: store2.getOpenHours()){
+            System.out.println(hours.getDayOfWeek().name());
+            System.out.println(hours.getOpeningTime());
+            System.out.println(hours.getClosingTime());
+            System.out.println(hours.getLastCallTime());
+        }
+        System.out.println("---------------");
+
         hoursRepository.duplicateHourForAllDays(hour);
 
         Assertions.assertEquals(7, store2.getOpenHours().size());
@@ -193,9 +202,12 @@ public class HoursRepositoryTest {
             Assertions.assertEquals(localTime1900, hours.getLastCallTime());
         }
 
-        //TODO: i 이용한 for loop 만들어서 두 어레이의 각 엘리먼트가 같은지 비교. (store1, 2 둘다.)
-
+        System.out.println("Open hours size: " + store2.getOpenHours().size());
+        System.out.println("findByStore size: " + hoursRepository.findByStore(store2).size());
         Assertions.assertArrayEquals(store2.getOpenHours().toArray(), hoursRepository.findByStore(store2).toArray());
+        Assertions.assertArrayEquals(store1.getOpenHours().toArray(), hoursRepository.findByStore(store1).toArray());
+
+
 //        Hours hour1 = new Hours(DayOfWeek.MONDAY, LocalTime.of(7, 0), LocalTime.of(15, 0), LocalTime.of(14, 30));
 //        Hours hour2 = new Hours(DayOfWeek.TUESDAY, LocalTime.of(9, 30), LocalTime.of(18, 0), LocalTime.of(17, 30));
 //        Hours hour3 = new Hours(DayOfWeek.WEDNESDAY, LocalTime.of(11, 0), LocalTime.of(22, 0), LocalTime.of(21, 0));
