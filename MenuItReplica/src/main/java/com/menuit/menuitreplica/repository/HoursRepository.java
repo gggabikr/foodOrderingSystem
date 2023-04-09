@@ -50,6 +50,8 @@ public class HoursRepository {
     }
 
     public void duplicateHourForAllDays(Hours hour){
+        Store store = hour.getStore();
+        deleteAllHoursWithGivenStore(store);
         List<Hours> hoursList = hour.duplicateHour(hour);
         for(Hours hours: hoursList){
             em.persist(hours);
@@ -72,10 +74,11 @@ public class HoursRepository {
             hours.setStore(store);
             hoursList.add(hours);
         }
-        for(Hours hour: store.getOpenHours()){
-            hour.setStore(null);
-        }
-        deleteAllHoursWithoutStore();
+        deleteAllHoursWithGivenStore(store);
+//        for(Hours hour: findByStore(store)){
+//            hour.setStore(null);
+//        }
+//        deleteAllHoursWithoutStore();
 
         store.getOpenHours().clear();
         store.getOpenHours().addAll(hoursList);
@@ -94,6 +97,15 @@ public class HoursRepository {
         List<Hours> resultList = em.createQuery("select h from Hours h where h.store is NULL", Hours.class).getResultList();
         for (Hours noStoreHour: resultList){
             em.remove(noStoreHour);
+        }
+    }
+
+    public void deleteAllHoursWithGivenStore(Store store){
+        List<Hours> resultList = em.createQuery("select h from Hours h where h.store = :store", Hours.class)
+                .setParameter("store", store)
+                .getResultList();
+        for (Hours hour: resultList){
+            em.remove(hour);
         }
     }
 }
