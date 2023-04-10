@@ -12,6 +12,7 @@ import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 @Transactional(readOnly = true)
@@ -40,13 +41,13 @@ public class HoursService {
         DayOfWeek day = DayOfWeek.valueOf(dayName);
 
         String[] splitOpening = openingTime.split(":");
-        LocalTime openingLocalTime = LocalTime.of(splitOpening[0], splitOpening[1]);
+        LocalTime openingLocalTime = LocalTime.of(Integer.parseInt(splitOpening[0]), Integer.parseInt(splitOpening[1]));
 
         String[] splitClosing = closingTime.split(":");
-        LocalTime closingLocalTime = LocalTime.of(splitClosing[0], splitClosing[1]);
+        LocalTime closingLocalTime = LocalTime.of(Integer.parseInt(splitClosing[0]), Integer.parseInt(splitClosing[1]));
 
         String[] splitLastCall = lastCallTime.split(":");
-        LocalTime lastCallLocalTime = LocalTime.of(splitLastCall[0], splitLastCall[1]);
+        LocalTime lastCallLocalTime = LocalTime.of(Integer.parseInt(splitLastCall[0]), Integer.parseInt(splitLastCall[1]));
 
         return hoursRepository.createHour(store, day, openingLocalTime,closingLocalTime,lastCallLocalTime);
     }
@@ -58,9 +59,10 @@ public class HoursService {
     public void duplicateHourForSelectedDays(Hours hour, String... dayNames) {
         List<DayOfWeek> days = new ArrayList<>();
         for(String dayName: dayNames){
-            days.add(DayOfWeek.of(dayName))
+            days.add(DayOfWeek.valueOf(dayName.toUpperCase()));
         }
-        hoursRepository.duplicateHourForSelectedDays(hour, days);
+        DayOfWeek[] daysArray = days.toArray(new DayOfWeek[days.size()]);
+        hoursRepository.duplicateHourForSelectedDays(hour, daysArray);
 
     }
 
@@ -68,13 +70,13 @@ public class HoursService {
         Store store = storeRepository.findOne(storeId);
 
         String[] splitOpening = openingTime.split(":");
-        LocalTime openingLocalTime = LocalTime.of(splitOpening[0], splitOpening[1]);
+        LocalTime openingLocalTime = LocalTime.of(Integer.parseInt(splitOpening[0]), Integer.parseInt(splitOpening[1]));
 
         String[] splitClosing = closingTime.split(":");
-        LocalTime closingLocalTime = LocalTime.of(splitClosing[0], splitClosing[1]);
+        LocalTime closingLocalTime = LocalTime.of(Integer.parseInt(splitClosing[0]), Integer.parseInt(splitClosing[1]));
 
         String[] splitLastCall = lastCallTime.split(":");
-        LocalTime lastCallLocalTime = LocalTime.of(splitLastCall[0], splitLastCall[1]);
+        LocalTime lastCallLocalTime = LocalTime.of(Integer.parseInt(splitLastCall[0]), Integer.parseInt(splitLastCall[1]));
 
         hoursRepository.setOpenHoursForAllDays(store, openingLocalTime,closingLocalTime,lastCallLocalTime);
     }
