@@ -61,7 +61,7 @@ public class HoursService {
         for(String dayName: dayNames){
             days.add(DayOfWeek.valueOf(dayName.toUpperCase()));
         }
-        DayOfWeek[] daysArray = days.toArray(new DayOfWeek[days.size()]);
+        DayOfWeek[] daysArray = days.toArray(new DayOfWeek[0]);
         hoursRepository.duplicateHourForSelectedDays(hour, daysArray);
 
     }
