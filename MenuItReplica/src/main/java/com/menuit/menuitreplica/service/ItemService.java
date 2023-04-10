@@ -17,10 +17,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemService {
 
-    private final UserRepository userRepository;
     private final StoreRepository storeRepository;
     private final ItemRepository itemRepository;
-    private final OrderRepository orderRepository;
 
     public Long registerItem(ItemDTO itemDTO) throws IllegalAccessException {
         Store store = storeRepository.findOne(itemDTO.getStoreId());
