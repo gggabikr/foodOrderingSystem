@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -55,6 +56,8 @@ public class Store {
     private int gratuity; //if number of customers is above certain number, it will set a tip with certain percentage.
 
     private int gratuityPercent;
+
+    private boolean runningFlag;
 
     private boolean status;
 
@@ -144,8 +147,29 @@ public class Store {
     }
 
     public void toggleStatus(){
+        this.runningFlag = false;
         this.status = !this.status;
     }
+
+    public void runStore(){
+        this.runningFlag = true;
+        while (runningFlag){
+            DayOfWeek currentDayOfWeek = LocalDate.now().getDayOfWeek();
+            LocalTime currentTime = LocalTime.now();
+
+            if(getHoursForGivenDay(currentDayOfWeek).getOpeningTime() == currentTime){
+                this.status = true;
+            }
+
+            if(getHoursForGivenDay(currentDayOfWeek).getClosingTime() == currentTime){
+                this.status = false;
+            }
+        }
+    }
+
+
+
+
 
     public String getAddressString(){
         String address = "";
