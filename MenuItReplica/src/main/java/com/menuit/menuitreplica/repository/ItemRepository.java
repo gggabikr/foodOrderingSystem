@@ -13,7 +13,10 @@ public class ItemRepository {
 
     private final EntityManager em;
 
-    public Long registerItem(Store store, Category category, Item item) throws IllegalAccessException {
+    public Long registerItem(Item item) throws IllegalAccessException {
+        Store store = item.getStore();
+        Category category = item.getCategory();
+
         List<Item> itemsByStore = findByStore(store);
         for(Item item1 : itemsByStore){
             if(item1.getName().equals(item.getName())){
