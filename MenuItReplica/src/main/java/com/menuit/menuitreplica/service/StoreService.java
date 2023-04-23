@@ -38,6 +38,7 @@ public class StoreService {
 //            store.setOrderAvailableHours();       //set an initial hour later
             store.setStoreDescription("Please describe your store in your own words.");
             store.setStatus(false);
+            store.setRunningFlag(false);
 
             return storeRepository.register(store);
         }
