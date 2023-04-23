@@ -24,7 +24,7 @@ public class ItemService {
         Store store = storeRepository.findOne(itemDTO.getStoreId());
         Category category = storeRepository.findOneCategory(itemDTO.getCategoryId());
         Item item = new Item(store,category,itemDTO.getName(), itemDTO.getPrice(),itemDTO.getItemType());
-        return itemRepository.registerItem(store,category,item);
+        return itemRepository.registerItem(item);
     }
 
 
