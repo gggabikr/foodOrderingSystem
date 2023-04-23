@@ -148,15 +148,15 @@ public class OrderRepositoryTest {
 
 
         //when
-        itemRepository.registerItem(store1, cate1, item1);
-        itemRepository.registerItem(store1, cate1, item2);
-        itemRepository.registerItem(store1, cate2, item3);
-        itemRepository.registerItem(store2, cat1, itemA);
-        itemRepository.registerItem(store2, cat1, itemB);
-        itemRepository.registerItem(store2, cat1, itemC);
-        itemRepository.registerItem(store2, cat1, itemD);
-        itemRepository.registerItem(store2, cat1, itemE);
-        itemRepository.registerItem(store2, cat1, itemF);
+        itemRepository.registerItem(item1);
+        itemRepository.registerItem(item2);
+        itemRepository.registerItem(item3);
+        itemRepository.registerItem(itemA);
+        itemRepository.registerItem(itemB);
+        itemRepository.registerItem(itemC);
+        itemRepository.registerItem(itemD);
+        itemRepository.registerItem(itemE);
+        itemRepository.registerItem(itemF);
 
 
 
