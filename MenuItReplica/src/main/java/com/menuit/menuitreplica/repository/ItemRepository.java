@@ -23,9 +23,11 @@ public class ItemRepository {
                 throw new IllegalArgumentException("Item with same name exists on the store.");
             }
         }
+
         if(category.getStore() != store){
             throw new IllegalAccessException("Given category doesn't belong to the store.");
         }
+
         store.addItem(item, category);
         em.persist(item);
         return item.getId();
@@ -41,12 +43,26 @@ public class ItemRepository {
         }
     }
 
+    public void reRegisterItem(Store store, Category category,Item item) throws IllegalAccessException {
+        if(item.getStore() != store){
+            throw new IllegalAccessException("This item doesn't belong to the given store.");
+        } else{
+            store.addItem(item, category);
+            item.reRegisterItem();
+        }
+    }
+
     public Item findOne(Long id){
         return em.find(Item.class, id);
     }
 
     public List<Item> findAll(){
-        return em.createQuery("select i from Item i", Item.class)
+        return em.createQuery("select i from Item i where i.deleted = false", Item.class)
+                .getResultList();
+    }
+
+    public List<Item> findAllDeleted(){
+        return em.createQuery("select i from Item i where i.deleted = true", Item.class)
                 .getResultList();
     }
 
@@ -102,6 +118,13 @@ public class ItemRepository {
                 .getResultList();
     }
 
+    public List<Item> findByStoreAndItemTag(Store store, ItemTag itemTag){
+        return em.createQuery("select i from Item i where i.itemTag = :tag and i.deleted = false and i.store = :store", Item.class)
+                .setParameter("tag", itemTag)
+                .setParameter("store", store)
+                .getResultList();
+    }
+
     public List<Item> findByStatus(Boolean status){
         return em.createQuery("select i from Item i where i.status = :status and i.deleted = false", Item.class)
                 .setParameter("status", status)
@@ -109,7 +132,8 @@ public class ItemRepository {
     }
 
     public List<Item> findDiscountedItemOnStore(Store store){
-        return em.createQuery("select i from Item i where i.store = :store and NOT (i.discountAmount is NULL and i.discountPercent is NULL) and i.deleted = false", Item.class)
+//        return em.createQuery("select i from Item i where i.store = :store and NOT (i.discountAmount is NULL and i.discountPercent is NULL) and i.deleted = false", Item.class)
+        return em.createQuery("select i from Item i where i.store = :store and NOT (i.discountAmount =0 and i.discountPercent =0) and i.deleted = false", Item.class)
                 .setParameter("store", store)
                 .getResultList();
 //        List<Item> resultList1 = em.createQuery("SELECT i FROM Item i WHERE i.store = :store AND i.discountAmount IS NOT NULL", Item.class)
@@ -121,5 +145,12 @@ public class ItemRepository {
 //        resultList1.removeAll(resultList2);
 //        resultList1.addAll(resultList2);
 //        return resultList1;
+    }
+
+    public List<Item> findByNameAndStore(Store store, String name){
+        return em.createQuery("SELECT i FROM Item i WHERE UPPER(i.name) LIKE CONCAT('%' ,UPPER(TRIM(:name)), '%') AND i.store = :store AND i.deleted = false",Item.class)
+                .setParameter("name", name)
+                .setParameter("store", store)
+                .getResultList();
     }
 }
