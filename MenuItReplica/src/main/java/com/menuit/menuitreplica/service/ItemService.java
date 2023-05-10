@@ -44,6 +44,10 @@ public class ItemService {
         return itemRepository.findAll();
     }
 
+    public List<Item> findAllDeleted(){
+        return itemRepository.findAllDeleted();
+    }
+
     public List<Item> findByStore(Long storeId){
         Store store = storeRepository.findOne(storeId);
         return itemRepository.findByStore(store);
@@ -72,6 +76,12 @@ public class ItemService {
         return itemRepository.findByItemType(itemType);
     }
 
+    public List<Item> findByStoreAndItemTag(Long storeId, String str){
+        Store store = storeRepository.findOne(storeId);
+        ItemTag itemTag = ItemTag.valueOf(str);
+        return itemRepository.findByStoreAndItemTag(store,itemTag);
+    }
+
     public List<Item> findByStoreAndItemType(Long storeId, String strType){
         Store store = storeRepository.findOne(storeId);
         ItemType itemType = ItemType.valueOf(strType);
@@ -98,4 +108,14 @@ public class ItemService {
         Store store = storeRepository.findOne(storeId);
         return itemRepository.findDiscountedItemOnStore(store);
     }
-}
+
+    public List<Item> findByNameAndStore(Long storeId, String name){
+        Store store = storeRepository.findOne(storeId);
+        return itemRepository.findByNameAndStore(store,name);
+    }
+
+    //todo: fill up this method
+//    public void reRegisterItem(Store store, Category category,Item item) throws IllegalAccessException {}
+
+
+    }
