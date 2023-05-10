@@ -2,11 +2,14 @@ package com.menuit.menuitreplica.repository;
 
 import com.menuit.menuitreplica.domain.*;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -95,12 +98,24 @@ public class ItemRepositoryTest {
         Item itemD = new Item(store2, store2.getCategories().get(0), "Spicy rice noodle soup", 18.25, "food");
         Item itemE = new Item(store2, store2.getCategories().get(0), "Cold brew coffee", 5.25, "nonSoda");
         Item itemF = new Item(store2, store2.getCategories().get(0), "Kokanee Beer", 4.25, "alcoholic");
+        Item itemG = new Item(store2, store2.getCategories().get(0), "Coke", 2.25, "soda");
 
         Item itemError1 = new Item(store1, store2.getCategories().get(0), "Error", 13.00, "food");
+        Item itemError2 = new Item(store1, store1.getCategories().get(0), "Ramen", 1110.00, "food");
+
+        item1.setItemTag(ItemTag.Popular);
+        item2.setItemTag(ItemTag.Popular);
+        item4.setItemTag(ItemTag.Popular);
+        itemA.setItemTag(ItemTag.Best);
+        itemB.setItemTag(ItemTag.Recommended);
+        itemC.setItemTag(ItemTag.Popular);
+        itemD.setItemTag(ItemTag.Popular);
+
+
 
         //when
-        itemRepository.registerItem(item1);
-        itemRepository.registerItem(item2);
+        Long item1Id = itemRepository.registerItem(item1);
+        Long item2Id = itemRepository.registerItem(item2);
         itemRepository.registerItem(item3);
         itemRepository.registerItem(item4);
         itemRepository.registerItem(item5);
@@ -109,68 +124,131 @@ public class ItemRepositoryTest {
         itemRepository.registerItem(itemC);
         itemRepository.registerItem(itemD);
         itemRepository.registerItem(itemE);
-        itemRepository.registerItem(itemF);
+        Long itemFId = itemRepository.registerItem(itemF);
+        Long itemGId = itemRepository.registerItem(itemG);
 
 
         //error should be raised
 //        itemRepository.registerItem(itemError1);
-
+//        itemRepository.registerItem(itemError2);
 
 
         //then
+        Assertions.assertEquals(item1, itemRepository.findOne(item1Id));
+        Assertions.assertEquals(item2, itemRepository.findOne(item2Id));
+        Assertions.assertEquals(itemF, itemRepository.findOne(itemFId));
+        Assertions.assertEquals(itemG, itemRepository.findOne(itemGId));
+
+        Assertions.assertEquals(12, itemRepository.findAll().size());
+
+        Assertions.assertEquals(5, itemRepository.findByStore(store1).size());
+        Assertions.assertEquals(7, itemRepository.findByStore(store2).size());
+
+        Assertions.assertEquals(3, itemRepository.findByStoreAndCategory(store1, cate1).size());
+        Assertions.assertEquals(2, itemRepository.findByStoreAndCategory(store1, cate2).size());
+        Assertions.assertEquals(7, itemRepository.findByStoreAndCategory(store2, cat1).size());
+
+        Assertions.assertEquals(7, itemRepository.findByItemType(ItemType.valueOf("food")).size());
+        Assertions.assertEquals(2, itemRepository.findByItemType(ItemType.valueOf("soda")).size());
+        Assertions.assertEquals(2, itemRepository.findByItemType(ItemType.valueOf("nonSoda")).size());
+        Assertions.assertEquals(1, itemRepository.findByItemType(ItemType.valueOf("alcoholic")).size());
+
+        Assertions.assertEquals(3, itemRepository.findByStoreAndItemType(store1, ItemType.valueOf("food")).size());
+        Assertions.assertEquals(4, itemRepository.findByStoreAndItemType(store2, ItemType.valueOf("food")).size());
+        Assertions.assertEquals(1, itemRepository.findByStoreAndItemType(store2, ItemType.valueOf("soda")).size());
+
+        Assertions.assertEquals(5, itemRepository.findByItemTag(ItemTag.Popular).size());
+        Assertions.assertEquals(1, itemRepository.findByItemTag(ItemTag.Best).size());
+        Assertions.assertEquals(1, itemRepository.findByItemTag(ItemTag.Recommended).size());
+        Assertions.assertEquals(5, itemRepository.findByItemTag(ItemTag.NoTag).size());
+
+        Assertions.assertEquals(3, itemRepository.findByStoreAndItemTag(store1,ItemTag.Popular).size());
+        Assertions.assertEquals(2, itemRepository.findByStoreAndItemTag(store1,ItemTag.NoTag).size());
+        Assertions.assertEquals(0, itemRepository.findByStoreAndItemTag(store1,ItemTag.Best).size());
+
+        Assertions.assertEquals(2, itemRepository.findByStoreAndItemTag(store2,ItemTag.Popular).size());
+        Assertions.assertEquals(1, itemRepository.findByStoreAndItemTag(store2,ItemTag.Recommended).size());
+        Assertions.assertEquals(1, itemRepository.findByStoreAndItemTag(store2,ItemTag.Best).size());
+        Assertions.assertEquals(3, itemRepository.findByStoreAndItemTag(store2,ItemTag.NoTag).size());
+
+        Assertions.assertEquals(12, itemRepository.findByStatus(true).size());
+        Assertions.assertEquals(0, itemRepository.findByStatus(false).size());
+
+
+
+        //when2
+        itemRepository.removeItem(store1, item1);
+        itemRepository.removeItem(store1, item5);
+
+        itemRepository.removeItem(store2, itemC);
+        itemRepository.removeItem(store2, itemE);
+        itemRepository.removeItem(store2, itemF);
+
+        item2.setDiscountPercent(50);
+        item3.setDiscountAmount(3.7);
+        itemB.setDiscountAmount(5.5);
+
+        //then2
+        Assertions.assertEquals(7, itemRepository.findAll().size());
+        Assertions.assertEquals(5, itemRepository.findAllDeleted().size());
+
+        Assertions.assertEquals(3, itemRepository.findByStore(store1).size());
+        Assertions.assertEquals(2, itemRepository.findByStoreDeleted(store1).size());
+
+        Assertions.assertEquals(4, itemRepository.findByStore(store2).size());
+        Assertions.assertEquals(3, itemRepository.findByStoreDeleted(store2).size());
+
+        Assertions.assertEquals(2, itemRepository.findByStoreAndCategory(store1, cate1).size());
+        Assertions.assertEquals(1, itemRepository.findByStoreAndCategoryDeleted(store1, cate1).size());
+
+        Assertions.assertEquals(1, itemRepository.findByStoreAndCategory(store1, cate2).size());
+        Assertions.assertEquals(1, itemRepository.findByStoreAndCategoryDeleted(store1, cate2).size());
+
+        Assertions.assertEquals(4, itemRepository.findByStoreAndCategory(store2, cat1).size());
+        Assertions.assertEquals(3, itemRepository.findByStoreAndCategoryDeleted(store2, cat1).size());
+
+
+        Assertions.assertEquals(4, itemRepository.findByItemType(ItemType.valueOf("food")).size());
+        Assertions.assertEquals(2, itemRepository.findByItemType(ItemType.valueOf("soda")).size());
+        Assertions.assertEquals(1, itemRepository.findByItemType(ItemType.valueOf("nonSoda")).size());
+        Assertions.assertEquals(0, itemRepository.findByItemType(ItemType.valueOf("alcoholic")).size());
+
+        Assertions.assertEquals(2, itemRepository.findByStoreAndItemType(store1, ItemType.valueOf("food")).size());
+        Assertions.assertEquals(1, itemRepository.findByStoreAndItemTypeDeleted(store1, ItemType.valueOf("food")).size());
+
+        Assertions.assertEquals(2, itemRepository.findByStoreAndItemType(store2, ItemType.valueOf("food")).size());
+        Assertions.assertEquals(2, itemRepository.findByStoreAndItemTypeDeleted(store2, ItemType.valueOf("food")).size());
+
+        Assertions.assertEquals(1, itemRepository.findByStoreAndItemType(store2, ItemType.valueOf("soda")).size());
+        Assertions.assertEquals(0, itemRepository.findByStoreAndItemTypeDeleted(store2, ItemType.valueOf("soda")).size());
+
+        Assertions.assertEquals(7, itemRepository.findByStatus(true).size());
+        Assertions.assertEquals(0, itemRepository.findByStatus(false).size());
+
+        Assertions.assertEquals(2, itemRepository.findDiscountedItemOnStore(store1).size());
+        Assertions.assertEquals(1, itemRepository.findDiscountedItemOnStore(store2).size());
+
+        Assertions.assertEquals(1, itemRepository.findByNameAndStore(store1, "curry").size());
+        Assertions.assertEquals(1, itemRepository.findByNameAndStore(store1, "Curry").size());
+        Assertions.assertEquals("Chicken Curry", itemRepository.findByNameAndStore(store1, "curry").get(0).getName());
+
+        itemRepository.reRegisterItem(store1, cate1, item1);
+
+        for(Item item: itemRepository.findByStore(store1)){
+            System.out.println(item.getName());
+        }
+
+        Assertions.assertEquals(2, itemRepository.findByNameAndStore(store1, "Chicken").size());
+        Assertions.assertEquals(2, itemRepository.findByNameAndStore(store2, "noodle soup").size());
+        Assertions.assertEquals(2, itemRepository.findByNameAndStore(store2, "nOodLe soUP").size());
+
+
+
 
 
     }
 
     @Test
-    public void removeItem() {
-    }
-
-    @Test
-    public void findOne() {
-    }
-
-    @Test
-    public void findAll() {
-    }
-
-    @Test
-    public void findByStore() {
-    }
-
-    @Test
-    public void findByStoreDeleted() {
-    }
-
-    @Test
-    public void findByStoreAndCategory() {
-    }
-
-    @Test
-    public void findByStoreAndCategoryDeleted() {
-    }
-
-    @Test
-    public void findByItemType() {
-    }
-
-    @Test
-    public void findByStoreAndItemType() {
-    }
-
-    @Test
-    public void findByStoreAndItemTypeDeleted() {
-    }
-
-    @Test
-    public void findByItemTag() {
-    }
-
-    @Test
-    public void findByStatus() {
-    }
-
-    @Test
-    public void findDiscountedItemOnStore() {
+    public void findByNameAndStore() throws Exception {
     }
 }
