@@ -29,7 +29,7 @@ public class Item {
     //discount on item, no matter who orders it.
     private int discountPercent;
 
-    private int discountAmount;
+    private double discountAmount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
@@ -65,7 +65,7 @@ public class Item {
         this.discountPercent = discountPercent;
         this.discountAmount = 0;
     }
-    public void setDiscountAmount(int discountAmount) {
+    public void setDiscountAmount(double discountAmount) {
         this.discountAmount = discountAmount;
         this.discountPercent = 0;
     }
@@ -78,7 +78,7 @@ public class Item {
     public void setMinimumOrderCount(int minimumOrderCount) {
         this.minimumOrderCount = minimumOrderCount;
     }
-    public void setItemTags(ItemTag itemTags) {
+    public void setItemTag(ItemTag itemTags) {
         this.itemTag = itemTags;
     }
     public void setItemType(ItemType itemType) {
@@ -94,7 +94,11 @@ public class Item {
     public Item(Store store, Category category, String name, double price){
         this.store = store;
         this.name = name;
-        this.price = price;
+        if(price <= 0){
+            this.price = 0.01;
+        } else {
+            this.price = price;
+        }
         //default setting below
         this.itemType = ItemType.food;
         this.ageRestriction = false;
@@ -110,7 +114,11 @@ public class Item {
     public Item(Store store, Category category, String name, double price, String itemType){
         this.store = store;
         this.name = name;
-        this.price = price;
+        if(price <= 0){
+            this.price = 0.01;
+        } else {
+            this.price = price;
+        }
         //default setting below
         this.itemType = ItemType.valueOf(itemType);
         this.deleted = false;
@@ -134,5 +142,9 @@ public class Item {
 
     public void deleteItem(){
         this.deleted = true;
+    }
+
+    public void reRegisterItem(){
+        this.deleted = false;
     }
 }
