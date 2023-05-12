@@ -9,10 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import static org.junit.Assert.*;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Transactional
@@ -208,16 +204,19 @@ public class ItemRepositoryTest {
         Assertions.assertEquals(3, itemRepository.findByStoreAndCategoryDeleted(store2, cat1).size());
 
 
-        Assertions.assertEquals(4, itemRepository.findByItemType(ItemType.valueOf("food")).size());
+        //7 food items -> 2 of them has deleted -> 5
+        Assertions.assertEquals(5, itemRepository.findByItemType(ItemType.valueOf("food")).size());
         Assertions.assertEquals(2, itemRepository.findByItemType(ItemType.valueOf("soda")).size());
-        Assertions.assertEquals(1, itemRepository.findByItemType(ItemType.valueOf("nonSoda")).size());
+        //2 nonSoda items -> 2 of them has deleted ->0
+        Assertions.assertEquals(0, itemRepository.findByItemType(ItemType.valueOf("nonSoda")).size());
+        //1 alcoholic items -> 1 of them has deleted ->0
         Assertions.assertEquals(0, itemRepository.findByItemType(ItemType.valueOf("alcoholic")).size());
 
         Assertions.assertEquals(2, itemRepository.findByStoreAndItemType(store1, ItemType.valueOf("food")).size());
         Assertions.assertEquals(1, itemRepository.findByStoreAndItemTypeDeleted(store1, ItemType.valueOf("food")).size());
 
-        Assertions.assertEquals(2, itemRepository.findByStoreAndItemType(store2, ItemType.valueOf("food")).size());
-        Assertions.assertEquals(2, itemRepository.findByStoreAndItemTypeDeleted(store2, ItemType.valueOf("food")).size());
+        Assertions.assertEquals(3, itemRepository.findByStoreAndItemType(store2, ItemType.valueOf("food")).size());
+        Assertions.assertEquals(1, itemRepository.findByStoreAndItemTypeDeleted(store2, ItemType.valueOf("food")).size());
 
         Assertions.assertEquals(1, itemRepository.findByStoreAndItemType(store2, ItemType.valueOf("soda")).size());
         Assertions.assertEquals(0, itemRepository.findByStoreAndItemTypeDeleted(store2, ItemType.valueOf("soda")).size());
@@ -242,13 +241,12 @@ public class ItemRepositoryTest {
         Assertions.assertEquals(2, itemRepository.findByNameAndStore(store2, "noodle soup").size());
         Assertions.assertEquals(2, itemRepository.findByNameAndStore(store2, "nOodLe soUP").size());
 
+        Item item6 = new Item(store1, store1.getCategories().get(0), "Rice noodle soup", 10.25, "food");
+        itemRepository.registerItem(item6);
 
+        Assertions.assertEquals(2, itemRepository.findByNameAndStore(store2, "noodle soup").size());
+        Assertions.assertEquals(1, itemRepository.findByNameAndStore(store1, "noodle soup").size());
+        Assertions.assertEquals(10.25, itemRepository.findByNameAndStore(store1, "noodle soup").get(0).getPrice());
 
-
-
-    }
-
-    @Test
-    public void findByNameAndStore() throws Exception {
     }
 }
