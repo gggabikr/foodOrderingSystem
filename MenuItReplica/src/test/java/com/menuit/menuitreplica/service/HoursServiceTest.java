@@ -3,7 +3,6 @@ package com.menuit.menuitreplica.service;
 import com.menuit.menuitreplica.domain.Address;
 import com.menuit.menuitreplica.domain.Hours;
 import com.menuit.menuitreplica.domain.Store;
-import com.menuit.menuitreplica.repository.OrderRepository;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
@@ -14,10 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

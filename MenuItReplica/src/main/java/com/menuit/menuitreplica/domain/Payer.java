@@ -171,7 +171,7 @@ public class Payer {
         sb.append("Store: ").append(makeStringBlock(19, store.getName()))
                 .append("Order: ").append(makeStringBlockAtFront(6, this.getPayment().getOrder().getId())).append("\n");
 
-        String type = "";
+        String type;
         OrderType orderType = this.getPayment().getOrder().getOrderType();
         if(orderType.equals(OrderType.table)){
             type = "Dine-In";

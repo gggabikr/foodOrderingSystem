@@ -1,7 +1,6 @@
 package com.menuit.menuitreplica.service;
 
 import com.menuit.menuitreplica.domain.User;
-import com.menuit.menuitreplica.domain.UserRole;
 import com.menuit.menuitreplica.repository.UserRepository;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;

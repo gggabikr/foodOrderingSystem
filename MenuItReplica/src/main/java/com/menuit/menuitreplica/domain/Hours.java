@@ -36,7 +36,7 @@ public class Hours {
     @Column(name = "last_call")
     private LocalTime lastCallTime;
 
-    protected Hours(){};
+    protected Hours(){}
 
     public Hours(DayOfWeek day, LocalTime opening, LocalTime closing, LocalTime lastCall){
     //check if opening is before both closing and lastCall, and if closing is after lastCall

@@ -1,7 +1,6 @@
 package com.menuit.menuitreplica.domain;
 
 import lombok.Getter;
-import org.springframework.lang.Nullable;
 
 import javax.persistence.Embeddable;
 
