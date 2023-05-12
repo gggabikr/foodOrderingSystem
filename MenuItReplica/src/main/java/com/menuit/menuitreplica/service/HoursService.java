@@ -12,7 +12,6 @@ import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 @Service
 @Transactional(readOnly = true)
@@ -40,17 +39,13 @@ public class HoursService {
         Store store = storeRepository.findOne(storeId);
         DayOfWeek day = DayOfWeek.valueOf(dayName);
 
-        String[] splitOpening = openingTime.split(":");
-        LocalTime openingLocalTime = LocalTime.of(Integer.parseInt(splitOpening[0]), Integer.parseInt(splitOpening[1]));
+        //in case any of below conditions are false, then the flag will be false
+        checkingErrorOfTimeString(openingTime, closingTime, lastCallTime);
 
-        String[] splitClosing = closingTime.split(":");
-        LocalTime closingLocalTime = LocalTime.of(Integer.parseInt(splitClosing[0]), Integer.parseInt(splitClosing[1]));
-
-        String[] splitLastCall = lastCallTime.split(":");
-        LocalTime lastCallLocalTime = LocalTime.of(Integer.parseInt(splitLastCall[0]), Integer.parseInt(splitLastCall[1]));
-
-        return hoursRepository.createHour(store, day, openingLocalTime,closingLocalTime,lastCallLocalTime);
+        return hoursRepository.createHour(store, day, parseTime(openingTime), parseTime(closingTime), parseTime(lastCallTime));
     }
+
+
 
     public void duplicateHourForAllDays(Hours hour){
         hoursRepository.duplicateHourForAllDays(hour);
@@ -69,17 +64,27 @@ public class HoursService {
     public void setOpenHoursForAllDays(Long storeId ,String openingTime, String closingTime, String lastCallTime){
         Store store = storeRepository.findOne(storeId);
 
-        String[] splitOpening = openingTime.split(":");
-        LocalTime openingLocalTime = LocalTime.of(Integer.parseInt(splitOpening[0]), Integer.parseInt(splitOpening[1]));
 
-        String[] splitClosing = closingTime.split(":");
-        LocalTime closingLocalTime = LocalTime.of(Integer.parseInt(splitClosing[0]), Integer.parseInt(splitClosing[1]));
+        //in case any of below conditions are false, then the flag will be false
+        checkingErrorOfTimeString(openingTime, closingTime, lastCallTime);
 
-        String[] splitLastCall = lastCallTime.split(":");
-        LocalTime lastCallLocalTime = LocalTime.of(Integer.parseInt(splitLastCall[0]), Integer.parseInt(splitLastCall[1]));
-
-        hoursRepository.setOpenHoursForAllDays(store, openingLocalTime,closingLocalTime,lastCallLocalTime);
+        hoursRepository.setOpenHoursForAllDays(store, parseTime(openingTime), parseTime(closingTime), parseTime(lastCallTime));
     }
+
+    private void checkingErrorOfTimeString(String openingTime, String closingTime, String lastCallTime) {
+        boolean timeFlag = openingTime.length() == 5 && closingTime.length() == 5 && lastCallTime.length() == 5 &&
+                openingTime.charAt(2) == ':' && closingTime.charAt(2) == ':' && lastCallTime.charAt(2) == ':';
+
+        if (!timeFlag){
+            throw new IllegalArgumentException("one or more of the time values are in an invalid format.");
+        }
+    }
+
+    private LocalTime parseTime(String timeString) {
+        String[] splitTime = timeString.split(":");
+        return LocalTime.of(Integer.parseInt(splitTime[0]), Integer.parseInt(splitTime[1]));
+    }
+
 
     public List<Hours> findByStore(Long storeId){
         Store store = storeRepository.findOne(storeId);
